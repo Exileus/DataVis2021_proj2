@@ -108,7 +108,7 @@ app.layout = html.Div(
             [
                 dbc.Col(
                     [
-                        html.div("Pieces to Visualize"),
+                        html.Div("Pieces to Visualize"),
                         dbc.ButtonGroup(
                             [
                                 dbc.Button(
