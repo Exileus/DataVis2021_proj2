@@ -83,6 +83,7 @@ color_piece_dict = cp_dict = {
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 external_stylesheets = [dbc.themes.LUX]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = "CHESS KINGDOM"
 server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 # app.title = "Chess Analytics"
@@ -98,16 +99,18 @@ margin_bottom = "50px"
 banner = dbc.Row(
     children=[
         dbc.Col(
-            html.H1("A Visualization of Endgame Chess Pieces"),
-            width={"size": 6, "offset": 0},
-            align="center",
+            html.Img(
+                src="/assets/apple-touch-icon.png",
+                id="logo",
+                style={"border-radius": "50%"},
+            ),
         ),
         dbc.Col(
-            html.Img(src="/assets/chess-app-small.jpg"),
-            width={"size": 3, "offset": 2, "order": "last"},
+            html.H1("A Visualization of Endgame Chess Pieces"),
+            align="center",
         ),
     ],
-    style={"margin-bottom": "20px"},
+    style={"margin-bottom": "50px", "margin-top": "-30px"},
     align="right",
 )
 
@@ -260,11 +263,12 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
                         piece_selector,
                         c_elo_slider,
                         c_moves_slider,
-                        c_dropdown
+                        c_dropdown,
+                        c_total_games,
                     ]
                 ),
                 # CHESS BOARD COLUMN
-                dbc.Col(width={"size": 6}, children=[graph, c_total_games]),
+                dbc.Col(width={"size": 6}, children=[graph]),
             ],
         ),
     ],
