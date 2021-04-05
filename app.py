@@ -462,7 +462,7 @@ about_this = dbc.Row(
             trigger="click",
             target="abt_us",
         ),
-    ]
+    ],
 )
 
 
@@ -479,6 +479,7 @@ dropdown_menus = dbc.Row(
         popover_game_type,
     ],
 )
+
 
 app.layout = dbc.Jumbotron(
     style={"background-color": "#ebebeb"},  # ADD SETTINGS HERE
