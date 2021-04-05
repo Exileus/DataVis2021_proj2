@@ -91,8 +91,7 @@ server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 # Defining app layout
 # A simple app for simple purposes.
 app.layout = html.Div(
-    [
-        dbc.Row(
+    [dbc.Jumbotron([dbc.Row(
             [
                 dbc.Col(
                     html.H2("A Visualization of Endgame Chess Pieces"),
@@ -262,7 +261,8 @@ app.layout = html.Div(
                 ),
                 dbc.Col(html.Div(id="game_count"), width={"size": "Auto", "offset": 1}),
             ]
-        ),
+        ),])
+        
     ]
 )
 
