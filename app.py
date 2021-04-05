@@ -108,8 +108,8 @@ app.layout = html.Div([
         ]),
     dbc.Row([dbc.Col(dcc.Graph(id="chessboard"),
                      width={'size':6,'order':'last'}),
-             dbc.Col([dcc.Button("Test Button that should be to the left of the chessboard but on the same row",color="dark"),
-                      dcc.Button("Another Button that should also be left of the chessboard.",color="dark")],
+             dbc.Col([dbc.Button("Test Button that should be to the left of the chessboard but on the same row",color="dark"),
+                      dbc.Button("Another Button that should also be left of the chessboard.",color="dark")],
                      width={'size':6,'order':'first'})
         ]),
     dbc.Row([dbc.Col(html.H3("Total Number of Games: "),width={'size':'Auto'}),
