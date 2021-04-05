@@ -107,10 +107,12 @@ app.layout = html.Div([
     dbc.Row([dbc.Col(dcc.Graph(id="chessboard"),
                      width={'size':6,'order':'last'}),
              dbc.Col([
-                 dbc.Row(dbc.Col(dbc.Button("Test Button that should be to the left of the chessboard but on the same row",color="dark"),
+                 dbc.Row(dbc.Col(dbc.Button("A button with size 12, does it spill over somewhere?",color="dark"),
+                             width={'size':12})),
+                 dbc.Row(dbc.Col(dbc.Button("A button with size 6, does it go somewhere?",color="dark"),
                              width={'size':3})),
-                 dbc.Row(dbc.Col(dbc.Button("Another Button that should also be left of the chessboard.",color="dark"),
-                             width={'size':3}))
+                 dbc.Row(dbc.Col(dcc.RangeSlider(min=1,max=10,value=[5,7],step=1),
+                                 width={"size":"Auto"}))
                          ])
         ]),
     dbc.Row([dbc.Col(html.H3("Total Number of Games: "),width={'size':'Auto'}),
