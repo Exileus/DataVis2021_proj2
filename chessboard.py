@@ -13,7 +13,7 @@ def board_output(vector):
 
 
 def getStackedBar(dictionary):
-    fig = px.bar(pd.DataFrame({"Games": dictionary}).T, height=50, orientation="h", barmode="stack", color_discrete_map={"black": "black", "white": "white", "draw":"gray"})
+    fig = px.bar(pd.DataFrame({"Games": dictionary}).T, height=50, orientation="h", barmode="stack", color_discrete_map={"BLACK": "black", "WHITE": "white", "DRAW":"gray"})
     margin = 0
     fig.update_layout(
         xaxis_title="",
@@ -30,7 +30,7 @@ def getStackedBar(dictionary):
         margin=dict(l=margin, r=margin, t=margin, b=margin, pad=0),
         legend_font = dict(family="Arial", size=12, color="black"),
     )
-        
+
     fig.update_traces(marker_line_width=0, hovertemplate="%{x}")
     return fig
 

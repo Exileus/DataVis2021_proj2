@@ -223,42 +223,70 @@ c_total_games = dbc.Row(
     ],
 )
 # BLACK / WHITE
-c_white_black = dbc.Col(
+c_choose_side = dbc.Col(
     style={"margin-bottom": margin_bottom},
     children=[
-        html.Div(str("Choose side").upper()),
-        dbc.ButtonGroup(
-            [
-                dbc.Button(
-                    "White",
-                    color="secondary",
-                    n_clicks=0,
-                    id="white_color",
-                    outline=False,
+        html.Div(
+            str("Choose side").upper(),
+            style={"text-align": "center", "margin-bottom": text_margin},
+        ),
+        dbc.Row(
+            justify="center",
+            children=[
+                dbc.ButtonGroup(
+                    style={"text-align": "center"},
+                    children=[
+                        dbc.Button(
+                            "White",
+                            color="secondary",
+                            n_clicks=0,
+                            id="white_color",
+                            outline=False,
+                        ),
+                        dbc.Button(
+                            "Black",
+                            color="dark",
+                            n_clicks=0,
+                            id="black_color",
+                            outline=False,
+                        ),
+                    ],
                 ),
-                dbc.Button(
-                    "Black",
-                    color="dark",
-                    n_clicks=0,
-                    id="black_color",
-                    outline=False,
-                ),
-            ]
+            ],
         ),
     ],
 )
 
-piece_selector = dbc.ButtonGroup(
+c_select_piece = dbc.Col(
     style={"margin-bottom": margin_bottom},
     children=[
-        dbc.Button(name, color="primary", n_clicks=0, outline=True, id=name)
-        for name in pieces_list
+        html.Div(
+            str("Select Piece").upper(),
+            style={"text-align": "center", "margin-bottom": text_margin},
+        ),
+        dbc.Row(
+            justify="center",
+            children=[
+                dbc.ButtonGroup(
+                    children=[
+                        dbc.Button(
+                            name, color="primary", n_clicks=0, outline=True, id=name
+                        )
+                        for name in pieces_list
+                    ],
+                )
+            ],
+        ),
     ],
 )
 c_elo_slider = dbc.Col(
     style={"margin-bottom": margin_bottom},
+    width=10,
     children=[
-        html.Div("Elo range:"),
+        html.Div(
+            str("Elo range").upper(),
+            style={"text-align": "center", "margin-bottom": text_margin},
+        ),
         dcc.RangeSlider(
             id="elo_slider",
             min=min_elo,
@@ -281,7 +309,10 @@ c_elo_slider = dbc.Col(
 c_moves_slider = dbc.Col(
     style={"margin-bottom": margin_bottom},
     children=[
-        html.Div("Game duration Slider (Moves)"),
+        html.Div(
+            str("Number of Moves").upper(),
+            style={"text-align": "center", "margin-bottom": text_margin},
+        ),
         dcc.RangeSlider(
             id="moves_slider",
             min=1,
@@ -365,8 +396,10 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
                         banner,
                         c_total_games,
                         stacked_graph,
-                        c_white_black,
-                        piece_selector,
+                        dbc.Row(
+                            style={"margin-bottom": margin_bottom},
+                            children=[c_choose_side, c_select_piece],
+                        ),
                         c_elo_slider,
                         c_moves_slider,
                         dropdown_menus,
@@ -476,7 +509,9 @@ def update_chessboard(
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
     game_results = dff.Winner.value_counts().to_dict()
-    game_results_norm = np.round(dff.Winner.value_counts(normalize=True), 2).to_dict()
+    game_results_norm = np.round(
+        dff.Winner.str.upper().value_counts(normalize=True), 2
+    ).to_dict()
 
     if "white" in game_results.keys():
         white_wins = game_results["white"]
