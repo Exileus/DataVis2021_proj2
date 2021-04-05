@@ -44,6 +44,7 @@ df_original = pd.read_csv(
 
 # Calculate min and max elo
 min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
+max_moves = df_original["moves"].max()
 
 # Define function to output an 8*8 dataframe based on a df and a list of column names to parse.
 
@@ -219,50 +220,66 @@ c_moves_slider = dbc.Col(
         dcc.RangeSlider(
             id="moves_slider",
             min=1,
-            max=50,
-            value=[8, 30],
+            max=max_moves,
+            value=[0, max_moves],
             step=1,
             pushable=1,
             allowCross=False,
-            marks={i: str(i) for i in range(0, 50, 5)},
+            marks={i: str(i) for i in range(0, max_moves, 5)},
         ),
     ],
 )
 
 text_margin = "6px"
 c_total_games = dbc.Col(
+    style={"margin-bottom": margin_bottom},
     children=[
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div(id="game_count"), html.Div("Total Games", style={"margin-left": text_margin})],
+            children=[
+                html.Div(id="game_count"),
+                html.Div("Total Games", style={"margin-left": text_margin}),
+            ],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div(id="white_wins"), html.Div("Wins by White", style={"margin-left": text_margin})],
+            children=[
+                html.Div(id="white_wins"),
+                html.Div("Wins by White", style={"margin-left": text_margin}),
+            ],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div(id="black_wins"), html.Div("Wins by Black", style={"margin-left": text_margin})],
+            children=[
+                html.Div(id="black_wins"),
+                html.Div("Wins by Black", style={"margin-left": text_margin}),
+            ],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div(id="draw"), html.Div("Draws", style={"margin-left": text_margin})],
+            children=[
+                html.Div(id="draw"),
+                html.Div("Draws", style={"margin-left": text_margin}),
+            ],
         ),
-    ]
+    ],
 )
 
 c_dropdown = dbc.Col(
-    dbc.DropdownMenu(
-        [
-            dbc.DropdownMenuItem("Status", header=True),
-            dbc.DropdownMenuItem("All"),
-            dbc.DropdownMenuItem("Draws"),
-            dbc.DropdownMenuItem("Checkmate"),
-            dbc.DropdownMenuItem("Resignation"),
-            dbc.DropdownMenuItem("Time Forfeit"),
-        ],
-        label="Status",
-    )
+    style={"margin-bottom": margin_bottom},
+    children=[
+        dbc.DropdownMenu(
+            [
+                dbc.DropdownMenuItem("Status", header=True),
+                dbc.DropdownMenuItem("All"),
+                dbc.DropdownMenuItem("Draws"),
+                dbc.DropdownMenuItem("Checkmate"),
+                dbc.DropdownMenuItem("Resignation"),
+                dbc.DropdownMenuItem("Time Forfeit"),
+            ],
+            label="Status",
+        )
+    ],
 )
 
 app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
@@ -361,6 +378,7 @@ def update_chessboard(
         .reset_index()
         .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
     )
+    print(df)
     df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
     chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))

@@ -82,7 +82,10 @@ def getHeatmap(dataframe: pd.DataFrame):
     rows => 1 to 8
     letters => A to H
     freq => frequency"""
-    freq = np.round(dataframe["freq"] / dataframe["freq"].sum() * 100, 2)
+    if dataframe["freq"].sum() == 0:
+        freq = dataframe["freq"]
+    else:
+        freq = np.round(dataframe["freq"] / dataframe["freq"].sum() * 100, 2)
     heatmap = go.Scatter(
         x0=0,
         y0=0,
@@ -100,9 +103,9 @@ def getHeatmap(dataframe: pd.DataFrame):
         marker_sizemode="diameter",
         marker_opacity=1,
         marker_color="#c12917",
-        hovertext=freq,
+        hovertext=dataframe["freq"],
         hoverinfo="all",
         # TODO
-        hovertemplate="<b>Test</b>: %{hovertext} - %{marker_size}<br>number: 1<extra></extra>",
+        hovertemplate="<b># Games:</b> %{hovertext}<extra></extra>",
     )
     return heatmap
