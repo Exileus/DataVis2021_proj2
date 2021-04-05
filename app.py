@@ -25,8 +25,7 @@ from styles import *
 # Read the .csv file with the preprocessed data.
 url="https://raw.githubusercontent.com/Exileus/DataVis2021_proj2/main/chess_app.csv"
 df_original = pd.read_csv(
-    url,
-    dtype={"pawns": int, "knights": int, "bishops": int, "rooks": int, "queens": int},
+    url,sep=",",dtype={"pawns": int, "knights": int, "bishops": int, "rooks": int, "queens": int},
     converters={"wKing_sqr": ast.literal_eval, "bKing_sqr": ast.literal_eval,
                 "wQueen_sqr": ast.literal_eval, "bQueen_sqr": ast.literal_eval,
                 "wRook_sqr": ast.literal_eval, "bRook_sqr": ast.literal_eval,
