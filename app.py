@@ -158,6 +158,7 @@ graph = dcc.Graph(
 # Stacked Bar
 stacked_graph = dcc.Graph(
     id="stackedbar",
+    animate=True,
     config={
         "displayModeBar": False,
         "scrollZoom": False,
@@ -273,31 +274,27 @@ c_moves_slider = dbc.Col(
 
 text_margin = "6px"
 c_total_games = dbc.Row(
-    style={"margin-bottom": margin_bottom},
+    style={"margin-bottom": "20px"},
     children=[
         dbc.Col(
-            style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="game_count"),
                 html.Div("Total Games", style={"margin-left": text_margin}),
             ],
         ),
         dbc.Col(
-            style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="white_wins"),
                 html.Div("Wins by White", style={"margin-left": text_margin}),
             ],
         ),
         dbc.Col(
-            style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="black_wins"),
                 html.Div("Wins by Black", style={"margin-left": text_margin}),
             ],
         ),
         dbc.Col(
-            style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="draw"),
                 html.Div("Draws", style={"margin-left": text_margin}),
@@ -374,13 +371,13 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
                 dbc.Col(
                     children=[
                         banner,
+                        c_total_games,
+                        stacked_graph,
                         c_white_black,
                         piece_selector,
                         c_elo_slider,
                         c_moves_slider,
                         dropdown_menus,
-                        c_total_games,
-                        stacked_graph
                     ]
                 ),
                 # CHESS BOARD COLUMN
@@ -487,6 +484,7 @@ def update_chessboard(
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
     game_results = dff.Winner.value_counts().to_dict()
+    game_results_norm = dff.Winner.value_counts(normalize=True).to_dict()
 
     if "white" in game_results.keys():
         white_wins = game_results["white"]
@@ -500,7 +498,7 @@ def update_chessboard(
         draw = game_results["draw"]
     else:
         draw = 0
-    stackedbar = getStackedBar(game_results)
+    stackedbar = getStackedBar(game_results_norm)
 
     # Then retrieve the column of interest.
     global g_color
@@ -531,7 +529,6 @@ def update_chessboard(
     chessboard.add_trace(getHeatmap(dataframe=df))
 
     return chessboard, stackedbar, game_count, white_wins, black_wins, draw, is_open
-
 
 # Statring the dash app
 if __name__ == "__main__":
