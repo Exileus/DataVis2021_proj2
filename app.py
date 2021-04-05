@@ -137,7 +137,15 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(dcc.Graph(id="chessboard"), width={"size": 6, "order": "last"}),
+                dbc.Col(
+                    dcc.Graph(id="chessboard"),
+                    width={"size": 6, "order": "last"},
+                    config={
+                        "displayModeBar": False,
+                        "scrollZoom": False,
+                        "showAxisDragHandles": False,
+                    },
+                ),
                 dbc.Col(
                     [
                         dbc.Row(
