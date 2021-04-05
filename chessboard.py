@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+import plotly.express as px
 
 # Define function to output an 8*8 dataframe based on a vector of coordinates.
 def board_output(vector):
@@ -10,6 +11,28 @@ def board_output(vector):
 
     return pd.DataFrame(brd)
 
+
+def getStackedBar(dictionary):
+    fig = px.bar(pd.DataFrame({"Games": dictionary}).T, height=50, orientation="h", barmode="stack", color_discrete_map={"black": "black", "white": "white", "draw":"gray"})
+    margin = 0
+    fig.update_layout(
+        xaxis_title="",
+        yaxis_title="",
+        xaxis_visible=False,
+        yaxis_visible=False,
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        legend_orientation="h",
+        legend_itemwidth=50,
+        legend_title="",
+        legend_xanchor="auto",
+        legend_x=0.5,
+        margin=dict(l=margin, r=margin, t=margin, b=margin, pad=0),
+        legend_font = dict(family="Arial", size=12, color="black"),
+    )
+        
+    fig.update_traces(marker_line_width=0)
+    return fig
 
 def getChessboard(dimensions: int = 600, margin: int = 50):
     row = [0, 1] * 4
@@ -56,7 +79,6 @@ def getChessboard(dimensions: int = 600, margin: int = 50):
             showscale=False,
         )
     )
-
     return chessboard
 
 

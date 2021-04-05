@@ -13,7 +13,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from whitenoise import WhiteNoise
 
-from chessboard import getChessboard, getHeatmap
+from chessboard import getChessboard, getHeatmap, getStackedBar, getBoard
 from styles import *
 
 # Read the .csv file with the preprocessed data.
@@ -154,6 +154,17 @@ graph = dcc.Graph(
         "showAxisDragHandles": False,
     },
 )
+
+# Stacked Bar
+stacked_graph = dcc.Graph(
+    id="stackedbar",
+    config={
+        "displayModeBar": False,
+        "scrollZoom": False,
+        "showAxisDragHandles": False,
+    },
+)
+
 #
 c_white_black = dbc.Col(
     style={"margin-bottom": margin_bottom},
@@ -369,6 +380,7 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
                         c_moves_slider,
                         dropdown_menus,
                         c_total_games,
+                        stacked_graph
                     ]
                 ),
                 # CHESS BOARD COLUMN
@@ -381,6 +393,7 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
 
 @app.callback(
     Output("chessboard", "figure"),
+    Output("stackedbar", "figure"),
     Output("game_count", "children"),
     Output("white_wins", "children"),
     Output("black_wins", "children"),
@@ -487,6 +500,7 @@ def update_chessboard(
         draw = game_results["draw"]
     else:
         draw = 0
+    stackedbar = getStackedBar(game_results)
 
     # Then retrieve the column of interest.
     global g_color
@@ -516,7 +530,7 @@ def update_chessboard(
     chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    return chessboard, game_count, white_wins, black_wins, draw, is_open
+    return chessboard, stackedbar, game_count, white_wins, black_wins, draw, is_open
 
 
 # Statring the dash app
