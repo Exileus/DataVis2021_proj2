@@ -212,8 +212,8 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.div("Total Number of Games: "), width={"size":3,"offset":6}),
-                dbc.Col(html.div(id="game_count"), width={"size": "Auto",'offset':0}),
+                dbc.Col(html.Div("Total Number of Games: "), width={"size":3,"offset":6}),
+                dbc.Col(html.Div(id="game_count"), width={"size": "Auto",'offset':0}),
             ]
         ),
     ]
