@@ -113,22 +113,24 @@ app.layout = html.Div(
                             [
                                 dbc.Button(
                                     "White",
-                                    color="light",
+                                    color="secondary",
                                     n_clicks=0,
                                     id="white_color",
+                                    outline=True
                                 ),
                                 dbc.Button(
                                     "Black",
                                     color="dark",
                                     n_clicks=0,
                                     id="black_color",
+                                    outline=True
                                 ),
                             ]
                         ),
                     ],
-                    width={"size": 4, "offset": 8},
+                    width={"size": 4, "offset": 6},
                 )
-            ]
+            ],justify="center"
         ),
         dbc.Row(
             [
@@ -141,19 +143,19 @@ app.layout = html.Div(
                                     dbc.ButtonGroup(
                                         [
                                             dbc.Button(
-                                                "King", color="secondary", n_clicks=0, id="King"
+                                                "King", color="info", n_clicks=0,outline=True, id="King"
                                             ),
                                             dbc.Button(
-                                                "Queen", color="dark", n_clicks=0, id="Queen"
+                                                "Queen", color="info", n_clicks=0,outline=True, id="Queen"
                                             ),
                                             dbc.Button(
-                                                "Rook", color="primary", n_clicks=0, id="Rook"
+                                                "Rook", color="info", n_clicks=0,outline=True, id="Rook"
                                             ),
                                             dbc.Button(
-                                                "Bishop", color="dark", n_clicks=0, id="Bishop"
+                                                "Bishop", color="info", n_clicks=0,outline=True, id="Bishop"
                                             ),
                                             dbc.Button(
-                                                "Knight", color="Secondary", n_clicks=0, id="Knight"
+                                                "Knight", color="info", n_clicks=0,outline=True,id="Knight"
                                             ),
                                         ]
                                     )
