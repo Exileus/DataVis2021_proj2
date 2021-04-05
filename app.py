@@ -50,7 +50,6 @@ min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
 
 def board_output(df, col_list):
     brd = np.zeros((8, 8))
-
     for col_name in col_list:
         for tup in df[col_name]:
             if tup == (None, None):
@@ -272,6 +271,7 @@ def update_chessboard(
         .reset_index()
         .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
     )
+    df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
     chessboard = getChessboard()
     chessboard.add_trace(getHeatmap(dataframe=df))
 
