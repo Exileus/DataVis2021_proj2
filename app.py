@@ -669,6 +669,8 @@ def update_chessboard(
     getBoard(chessboard)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
+    print(f"{g_color = }, {g_game_type = }, {g_piece = }, {g_status = }, {g_time_control = }, {g_winner = }")
+
     return (
         chessboard,
         stackedbar,
