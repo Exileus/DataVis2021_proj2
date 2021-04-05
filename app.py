@@ -229,23 +229,24 @@ c_moves_slider = dbc.Col(
     ],
 )
 
+text_margin = "6px"
 c_total_games = dbc.Col(
     children=[
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div("Total Games"), html.Div(id="game_count")],
+            children=[html.Div(id="game_count"), html.Div("Total Games", style={"margin-left": text_margin})],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div("White Wins"), html.Div(id="white_wins")],
+            children=[html.Div(id="white_wins"), html.Div("Wins by White", style={"margin-left": text_margin})],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div("Black Wins"), html.Div(id="black_wins")],
+            children=[html.Div(id="black_wins"), html.Div("Wins by Black", style={"margin-left": text_margin})],
         ),
         dbc.Row(
             style={"margin-bottom": margin_bottom},
-            children=[html.Div("Draws"), html.Div(id="draw")],
+            children=[html.Div(id="draw"), html.Div("Draws", style={"margin-left": text_margin})],
         ),
     ]
 )
