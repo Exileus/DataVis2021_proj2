@@ -112,7 +112,8 @@ dropdown_game_type_dict = gt_dict = {
 
 # Set stylesheets and app.
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-external_stylesheets = [dbc.themes.LUX]
+FA = "https://use.fontawesome.com/releases/v5.12.1/css/all.css"
+external_stylesheets = [dbc.themes.LUX,FA]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "CHESS KINGDOM"
 server = app.server
@@ -196,37 +197,37 @@ c_white_black = dbc.Col(
 piece_selector = dbc.ButtonGroup(
     style={"margin-bottom": margin_bottom},
     children=[
-        dbc.Button(
-            "King",
+        dbc.Button([html.I(className="fas fa-chess-king mr-2"),
+            "King"],
             color=(button_color := "primary"),
             n_clicks=0,
             active=True,
             outline=True,
             id="King",
         ),
-        dbc.Button(
-            "Queen",
+        dbc.Button([html.I(className="fas fa-chess-queen mr-2"),
+            "Queen"],
             color=button_color,
             n_clicks=0,
             active=False,
             id="Queen",
         ),
-        dbc.Button(
-            "Rook",
+        dbc.Button([html.I(className="fas fa-chess-rook mr-2"),
+            "Rook"],
             color=button_color,
             n_clicks=0,
             active=False,
             id="Rook",
         ),
-        dbc.Button(
-            "Bishop",
+        dbc.Button([html.I(className="fas fa-chess-bishop mr-2"),
+            "Bishop"],
             color=button_color,
             n_clicks=0,
             active=False,
             id="Bishop",
         ),
-        dbc.Button(
-            "Knight",
+        dbc.Button([html.I(className="fas fa-chess-knight mr-2"),
+            "Knight"],
             color=button_color,
             n_clicks=0,
             active=False,
