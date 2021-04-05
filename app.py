@@ -107,7 +107,7 @@ banner = dbc.Row(
         dbc.Col(
             html.H1("A Visualization of Endgame Chess Pieces"),
             align="center",
-            width=10, 
+            width=10,
         ),
     ],
     style={"margin-bottom": "50px", "margin-top": "-30px"},
@@ -148,7 +148,6 @@ c_white_black = dbc.Col(
         ),
     ],
 )
-
 
 piece_selector = dbc.ButtonGroup(
     style={"margin-bottom": margin_bottom},
@@ -231,8 +230,24 @@ c_moves_slider = dbc.Col(
 )
 
 c_total_games = dbc.Col(
-    style={"margin-bottom": margin_bottom},
-    children=[html.Div("Total Number of Games:"), html.Div(id="game_count")],
+    children=[
+        dbc.Row(
+            style={"margin-bottom": margin_bottom},
+            children=[html.Div("Total Games"), html.Div(id="game_count")],
+        ),
+        dbc.Row(
+            style={"margin-bottom": margin_bottom},
+            children=[html.Div("White Wins"), html.Div(id="white_wins")],
+        ),
+        dbc.Row(
+            style={"margin-bottom": margin_bottom},
+            children=[html.Div("Black Wins"), html.Div(id="black_wins")],
+        ),
+        dbc.Row(
+            style={"margin-bottom": margin_bottom},
+            children=[html.Div("Draws"), html.Div(id="draw")],
+        ),
+    ]
 )
 
 c_dropdown = dbc.Col(
@@ -278,6 +293,9 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
 @app.callback(
     Output("chessboard", "figure"),
     Output("game_count", "children"),
+    Output("white_wins", "children"),
+    Output("black_wins", "children"),
+    Output("draw", "children"),
     Input("white_color", "n_clicks"),
     Input("black_color", "n_clicks"),
     Input("King", "n_clicks"),
@@ -309,6 +327,20 @@ def update_chessboard(
 
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
+    game_results = dff.Winner.value_counts().to_dict()
+
+    if "white" in game_results.keys():
+        white_wins = game_results["white"]
+    else:
+        white_wins = 0
+    if "black" in game_results.keys():
+        black_wins = game_results["black"]
+    else:
+        black_wins = 0
+    if "draw" in game_results.keys():
+        draw = game_results["draw"]
+    else:
+        draw = 0
 
     # Then retrieve the column of interest.
     global g_color
@@ -329,10 +361,10 @@ def update_chessboard(
         .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
     )
     df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
-    chessboard = getChessboard(600)
+    chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    return chessboard, game_count
+    return chessboard, game_count, white_wins, black_wins, draw
 
 
 # Statring the dash app
