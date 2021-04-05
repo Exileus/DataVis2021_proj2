@@ -13,7 +13,13 @@ def board_output(vector):
 
 
 def getStackedBar(dictionary):
-    fig = px.bar(pd.DataFrame({"Games": dictionary}).T, height=50, orientation="h", barmode="stack", color_discrete_map={"BLACK": "black", "WHITE": "white", "DRAW":"gray"})
+    fig = px.bar(
+        pd.DataFrame({"Games": dictionary}).T,
+        height=50,
+        orientation="h",
+        barmode="stack",
+        color_discrete_map={"BLACK": "black", "WHITE": "white", "DRAW": "gray"},
+    )
     margin = 0
     fig.update_layout(
         xaxis_title="",
@@ -28,11 +34,12 @@ def getStackedBar(dictionary):
         legend_xanchor="auto",
         legend_x=0.5,
         margin=dict(l=margin, r=margin, t=margin, b=margin, pad=0),
-        legend_font = dict(family="Arial", size=12, color="black"),
+        legend_font=dict(family="Arial", size=12, color="black"),
     )
 
     fig.update_traces(marker_line_width=0, hovertemplate="%{x}")
     return fig
+
 
 def getChessboard(dimensions: int = 600, margin: int = 50):
     row = [0, 1] * 4
@@ -47,6 +54,7 @@ def getChessboard(dimensions: int = 600, margin: int = 50):
             paper_bgcolor="rgba(0,0,0,0)",
             font_color="#303030",
             coloraxis_showscale=False,
+            showlegend=False,
             yaxis=dict(
                 range=[-0.5, 7.5],
                 tickfont_size=12,
@@ -65,37 +73,76 @@ def getChessboard(dimensions: int = 600, margin: int = 50):
             ),
         )
     )
-    chessboard.add_trace(
-        go.Heatmap(
-            x=list(range(0, 8)),
-            y=list(range(0, 8)),
-            x0=0,
-            y0=0,
-            dx=0,
-            z=boardmatrix,
-            hoverinfo="none",
-            name="Chess Board",
-            colorscale=["white", "#303030"],
-            showscale=False,
-        )
-    )
+    getBoard(chessboard)
+    # chessboard.add_trace(
+    #     go.Heatmap(
+    #         x=list(range(0, 8)),
+    #         y=list(range(0, 8)),
+    #         x0=0,
+    #         y0=0,
+    #         dx=0,
+    #         z=boardmatrix,
+    #         hoverinfo="none",
+    #         name="Chess Board",
+    #         colorscale=["white", "#303030"],
+    #         showscale=False,
+    #     )
+    # )
     return chessboard
 
 
-def getBoard():
-    row = [0, 1] * 4
-    boardmatrix = [row[::-1] if i % 2 == 1 else row for i in range(1, 9)]
-    return go.Heatmap(
-        x=list(range(0, 8)),
-        y=list(range(0, 8)),
-        x0=0,
-        y0=0,
-        dx=0,
-        z=boardmatrix,
-        hoverinfo="none",
-        name="Chess Board",
-        colorscale=["white", "black"],
-        showscale=False,
+def getBoard(fig):
+    size = 87.5
+    x_black = []
+    for i in range(8):
+        if (i % 2) == 0:
+            x_black += list(range(0,8,2))
+        else:
+            x_black += list(range(1,8,2))
+            
+    x_white = []
+    for i in range(8):
+        if (i % 2) == 0:
+            x_white += list(range(1,8,2))
+        else:
+            x_white += list(range(0,8,2))
+    fig.add_trace(
+        go.Scatter(
+            x0=0,
+            y0=0,
+            dx=0,
+            x=x_black,
+            y=sorted([i for i in range(0, 8, 1)] * 4),
+            name="black_squares",
+            mode="markers",
+            opacity=1,
+            marker_symbol="square",
+            marker_line_color="black",
+            marker_size=size,
+            marker_sizemode="diameter",
+            marker_opacity=1,
+            marker_color="#303030",
+            hoverinfo="none",
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x0=0,
+            y0=0,
+            dx=0,
+            x=x_white,
+            y=sorted([i for i in range(0, 8, 1)] * 4),
+            name="white_squares",
+            mode="markers",
+            opacity=1,
+            marker_symbol="square",
+            marker_size=size,
+            marker_sizemode="diameter",
+            marker_opacity=1,
+            marker_color="white",
+            hoverinfo="none",
+        )
     )
 
 

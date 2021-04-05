@@ -152,7 +152,8 @@ graph = dbc.Row(
     children=[
         dcc.Graph(
             id="chessboard",
-            style={"margin-left": "auto", "margin-right": "auto"},
+            animate=True,
+            style={"margin-left": "auto", "margin-right": "auto", "background-color": "lightgray"},
             config={
                 "displayModeBar": False,
                 "scrollZoom": False,
@@ -591,6 +592,7 @@ def update_chessboard(
 
     df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
     chessboard = getChessboard(800)
+    getBoard(chessboard)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
     return (
