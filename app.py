@@ -112,7 +112,8 @@ dropdown_game_type_dict = gt_dict = {
 
 # Set stylesheets and app.
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-external_stylesheets = [dbc.themes.LUX]
+FA = "https://use.fontawesome.com/releases/v5.12.1/css/all.css"
+external_stylesheets = [dbc.themes.LUX, FA]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "CHESS KINGDOM"
 server = app.server
@@ -241,14 +242,16 @@ c_choose_side = dbc.Col(
                             color="secondary",
                             n_clicks=0,
                             id="white_color",
-                            outline=False,
+                            outline=True,
+                            active=True,
                         ),
                         dbc.Button(
                             "Black",
                             color="dark",
                             n_clicks=0,
                             id="black_color",
-                            outline=False,
+                            outline=True,
+                            active=False,
                         ),
                     ],
                 ),
@@ -259,6 +262,7 @@ c_choose_side = dbc.Col(
 
 c_select_piece = dbc.Col(
     style={"margin-bottom": margin_bottom},
+    width=9,
     children=[
         html.Div(
             str("Select Piece").upper(),
@@ -270,7 +274,15 @@ c_select_piece = dbc.Col(
                 dbc.ButtonGroup(
                     children=[
                         dbc.Button(
-                            name, color="danger", n_clicks=0, outline=True, id=name
+                            [
+                                html.I(className=f"fas fa-chess-{name.lower()} mr-2"),
+                                name,
+                            ],
+                            color="primary",
+                            n_clicks=0,
+                            outline=True,
+                            id=name,
+                            active=False,
                         )
                         for name in pieces_list
                     ],
@@ -432,6 +444,13 @@ app.layout = dbc.Jumbotron(
     Output("black_wins", "children"),
     Output("draw", "children"),
     Output("wn_menu", "is_open"),
+    Output("white_color", "active"),
+    Output("black_color", "active"),
+    Output("King", "active"),
+    Output("Queen", "active"),
+    Output("Rook", "active"),
+    Output("Bishop", "active"),
+    Output("Knight", "active"),
     Input("white_color", "n_clicks"),
     Input("black_color", "n_clicks"),
     Input("King", "n_clicks"),
@@ -544,7 +563,7 @@ def update_chessboard(
 
     if trigger_button in ["white_color", "black_color"]:
         g_color = trigger_button
-    if trigger_button in ["King", "Queen", "Rook", "Bishop", "Knight"]:
+    if trigger_button in pieces_list:
         g_piece = trigger_button
 
     df = board_output(dff, cp_dict[g_color, g_piece])
@@ -554,6 +573,14 @@ def update_chessboard(
         is_open = False
     else:
         is_open = True
+    # Additionaly pt.2:
+    if g_color == "white_color":
+        wc_act, bc_act = True, False
+    else:
+        wc_act, bc_act = False, True
+
+    # Additionaly pt3:
+    k_act, q_act, r_act, b_act, n_act = [x == g_piece for x in pieces_list]
 
     # Transform it for the heatmap.
     df = (
@@ -566,7 +593,22 @@ def update_chessboard(
     chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    return chessboard, stackedbar, game_count, white_wins, black_wins, draw, is_open
+    return (
+        chessboard,
+        stackedbar,
+        game_count,
+        white_wins,
+        black_wins,
+        draw,
+        is_open,
+        wc_act,
+        bc_act,
+        k_act,
+        q_act,
+        r_act,
+        b_act,
+        n_act,
+    )
 
 
 # Statring the dash app
