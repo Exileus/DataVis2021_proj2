@@ -120,7 +120,7 @@ server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 
 
 # Defining app layout
-margin_bottom = "50px"
+margin_bottom = "30px"
 
 # Banner
 
@@ -146,24 +146,36 @@ banner = dbc.Row(
 )
 
 # Graph
-graph = dcc.Graph(
-    id="chessboard",
-    config={
-        "displayModeBar": False,
-        "scrollZoom": False,
-        "showAxisDragHandles": False,
-    },
+graph = dbc.Row(
+    # style={"margin-bottom": "40px"},
+    justify="center",
+    children=[
+        dcc.Graph(
+            id="chessboard",
+            config={
+                "displayModeBar": False,
+                "scrollZoom": False,
+                "showAxisDragHandles": False,
+            },
+        )
+    ],
 )
 
 # Stacked Bar
-stacked_graph = dcc.Graph(
-    id="stackedbar",
-    animate=True,
-    config={
-        "displayModeBar": False,
-        "scrollZoom": False,
-        "showAxisDragHandles": False,
-    },
+stacked_graph = dbc.Row(
+    style={"margin-bottom": "30px"},
+    justify="center",
+    children=[
+        dcc.Graph(
+            id="stackedbar",
+            animate=True,
+            config={
+                "displayModeBar": False,
+                "scrollZoom": False,
+                "showAxisDragHandles": False,
+            },
+        )
+    ],
 )
 
 #
@@ -273,31 +285,44 @@ c_moves_slider = dbc.Col(
 )
 
 text_margin = "6px"
+
 c_total_games = dbc.Row(
     style={"margin-bottom": "20px"},
+    justify="center",
     children=[
         dbc.Col(
             children=[
-                html.Div(id="game_count"),
-                html.Div("Total Games", style={"margin-left": text_margin}),
+                html.Div(id="game_count", style={"text-align": "center"}),
+                html.Div(
+                    "Total Games",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
             ],
         ),
         dbc.Col(
             children=[
-                html.Div(id="white_wins"),
-                html.Div("Wins by White", style={"margin-left": text_margin}),
+                html.Div(id="white_wins", style={"text-align": "center"}),
+                html.Div(
+                    "Wins by White",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
             ],
         ),
         dbc.Col(
             children=[
-                html.Div(id="black_wins"),
-                html.Div("Wins by Black", style={"margin-left": text_margin}),
+                html.Div(id="black_wins", style={"text-align": "center"}),
+                html.Div(
+                    "Wins by Black",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
             ],
         ),
         dbc.Col(
             children=[
-                html.Div(id="draw"),
-                html.Div("Draws", style={"margin-left": text_margin}),
+                html.Div(id="draw", style={"text-align": "center"}),
+                html.Div(
+                    "Draws", style={"margin-left": text_margin, "text-align": "center"}
+                ),
             ],
         ),
     ],
@@ -484,7 +509,7 @@ def update_chessboard(
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
     game_results = dff.Winner.value_counts().to_dict()
-    game_results_norm = dff.Winner.value_counts(normalize=True).to_dict()
+    game_results_norm = np.round(dff.Winner.value_counts(normalize=True),2).to_dict()
 
     if "white" in game_results.keys():
         white_wins = game_results["white"]
@@ -529,6 +554,7 @@ def update_chessboard(
     chessboard.add_trace(getHeatmap(dataframe=df))
 
     return chessboard, stackedbar, game_count, white_wins, black_wins, draw, is_open
+
 
 # Statring the dash app
 if __name__ == "__main__":
