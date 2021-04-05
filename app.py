@@ -96,13 +96,13 @@ app.layout = html.Div(
             [
                 dbc.Col(
                     html.H2("A Visualization of Endgame Chess Pieces"),
-                    width={"size": 6, "offset": 0},
+                    width={"size": 6, "offset": 0},align="end",
                 ),
                 dbc.Col(
                     html.Img(src="/assets/chess-app-small.jpg"),
                     width={"size": 3, "offset": 2, "order": "last"},
                 ),
-            ]
+            ],style={"margin-bottom": "25px"}
         ),
         dbc.Row(
             [
@@ -158,7 +158,7 @@ app.layout = html.Div(
                                                 "Knight", color="info", n_clicks=0,outline=True,id="Knight"
                                             ),
                                         ]
-                                    )
+                                    ),width={'size':'Auto','offset':0}
                                 )
                             ],justify="center",style={"margin-bottom": "25px"}
                         ),
@@ -212,8 +212,8 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.Div("Total Number of Games: "), width={"size":3,"offset":6}),
-                dbc.Col(html.Div(id="game_count"), width={"size": "Auto",'offset':0}),
+                dbc.Col(html.Div("Total Number of Games:"), width={"size":"Auto","offset":6}),
+                dbc.Col(html.Div(id="game_count"), width={"size": "Auto",'offset':1}),
             ]
         ),
     ]
