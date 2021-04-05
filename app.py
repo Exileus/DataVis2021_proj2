@@ -81,7 +81,7 @@ color_piece_dict = cp_dict = {
 
 # Set stylesheets and app.
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = [dbc.themes.LUX]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
