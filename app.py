@@ -76,12 +76,14 @@ app.layout = html.Div([
              dbc.Col(html.H3("I need to sleep, but please make this pretty."),
                      width={'size':3,'offset':0})]
             ),
-    dbc.Row([dbc.Col(html.H3("The input over there is for choice of color ->"),
-                     width={'size':4,'offset':0}
-                     ),
-             dbc.Col(dbc.ButtonGroup([dbc.Button("White",color="Secondary",n_clicks=0,id="white_color"),
+    dbc.Row([dbc.Col([html.H3("Input for choice of color"),
+                     dbc.ButtonGroup([dbc.Button("White",color="Secondary",n_clicks=0,id="white_color"),
                                       dbc.Button("Black",color="Secondary",n_clicks=0,id="black_color")
                                       ])
+                     ]
+                     width={'size':6,'offset':0,'order:'1}
+                     ),
+             dbc.Col(
                      )
              ]),
     dbc.Row([dbc.Col(html.H3("Elo range:"),
