@@ -13,17 +13,19 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input,Output
 
-
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
+from whitenoise import WhiteNoise
+
 from chessboard import getChessboard, getHeatmap
 from styles import *
 
 # Read the .csv file with the preprocessed data.
+url="https://raw.githubusercontent.com/Exileus/DataVis2021_proj2/main/chess_app.csv"
 df_original = pd.read_csv(
-    "chess_app.csv",
+    url,
     dtype={"pawns": int, "knights": int, "bishops": int, "rooks": int, "queens": int},
     converters={"wKing_sqr": ast.literal_eval, "bKing_sqr": ast.literal_eval,
                 "wQueen_sqr": ast.literal_eval, "bQueen_sqr": ast.literal_eval,
@@ -68,6 +70,7 @@ color_piece_dict = cp_dict = {
 external_stylesheets = [dbc.themes.BOOTSTRAP]#["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
+server.wsgi_app = WhiteNoise(server.wsgi_app, root=‘static/’)
 #app.title = "Chess Analytics"
 
 
