@@ -10,6 +10,7 @@ def board_output(vector):
 
     return pd.DataFrame(brd)
 
+
 def getChessboard(dimensions: int = 500, margin: int = 50):
     row = [0, 1] * 4
     boardmatrix = [row[::-1] if i % 2 == 1 else row for i in range(1, 9)]
@@ -59,6 +60,23 @@ def getChessboard(dimensions: int = 500, margin: int = 50):
     )
 
     return chessboard
+
+
+def getBoard():
+    row = [0, 1] * 4
+    boardmatrix = [row[::-1] if i % 2 == 1 else row for i in range(1, 9)]
+    return go.Heatmap(
+        x=list(range(0, 8)),
+        y=list(range(0, 8)),
+        x0=0,
+        y0=0,
+        dx=0,
+        z=boardmatrix,
+        hoverinfo="none",
+        name="Chess Board",
+        colorscale=["white", "black"],
+        showscale=False,
+    )
 
 
 def getHeatmap(dataframe: pd.DataFrame):
