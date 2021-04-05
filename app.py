@@ -87,7 +87,7 @@ server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 # app.title = "Chess Analytics"
 
-# 
+#
 # Defining app layout
 # A simple app for simple purposes.
 app.layout = html.Div(
@@ -96,13 +96,15 @@ app.layout = html.Div(
             [
                 dbc.Col(
                     html.H2("A Visualization of Endgame Chess Pieces"),
-                    width={"size": 6, "offset": 0},align="end",
+                    width={"size": 6, "offset": 0},
+                    align="end",
                 ),
                 dbc.Col(
                     html.Img(src="/assets/chess-app-small.jpg"),
                     width={"size": 3, "offset": 2, "order": "last"},
                 ),
-            ],style={"margin-bottom": "25px"}
+            ],
+            style={"margin-bottom": "25px"},
         ),
         dbc.Row(
             [
@@ -116,21 +118,22 @@ app.layout = html.Div(
                                     color="secondary",
                                     n_clicks=0,
                                     id="white_color",
-                                    outline=True
+                                    outline=True,
                                 ),
                                 dbc.Button(
                                     "Black",
                                     color="dark",
                                     n_clicks=0,
                                     id="black_color",
-                                    outline=True
+                                    outline=True,
                                 ),
                             ]
                         ),
                     ],
                     width={"size": 4, "offset": 7},
                 )
-            ],justify="center"
+            ],
+            justify="center",
         ),
         dbc.Row(
             [
@@ -143,55 +146,82 @@ app.layout = html.Div(
                                     dbc.ButtonGroup(
                                         [
                                             dbc.Button(
-                                                "King", color=(button_color := "primary"), n_clicks=0,outline=True, id="King"
+                                                "King",
+                                                color=(button_color := "primary"),
+                                                n_clicks=0,
+                                                outline=True,
+                                                id="King",
                                             ),
                                             dbc.Button(
-                                                "Queen", color=button_color, n_clicks=0,outline=True, id="Queen"
+                                                "Queen",
+                                                color=button_color,
+                                                n_clicks=0,
+                                                outline=True,
+                                                id="Queen",
                                             ),
                                             dbc.Button(
-                                                "Rook", color=button_color, n_clicks=0,outline=True, id="Rook"
+                                                "Rook",
+                                                color=button_color,
+                                                n_clicks=0,
+                                                outline=True,
+                                                id="Rook",
                                             ),
                                             dbc.Button(
-                                                "Bishop", color=button_color, n_clicks=0,outline=True, id="Bishop"
+                                                "Bishop",
+                                                color=button_color,
+                                                n_clicks=0,
+                                                outline=True,
+                                                id="Bishop",
                                             ),
                                             dbc.Button(
-                                                "Knight", color=button_color, n_clicks=0,outline=True,id="Knight"
+                                                "Knight",
+                                                color=button_color,
+                                                n_clicks=0,
+                                                outline=True,
+                                                id="Knight",
                                             ),
                                         ]
-                                    ),width={'size':'Auto','offset':0}
+                                    ),
+                                    width={"size": "Auto", "offset": 0},
                                 )
-                            ],justify="center",style={"margin-bottom": "25px"}
+                            ],
+                            justify="center",
+                            style={"margin-bottom": "25px"},
                         ),
-                        dbc.Row(
-                            dbc.Col()
-                        ),
-                        dbc.Row(
-            [
-                dbc.Col(html.Div("Elo range:"), width={"size": 4}),
-                dbc.Col(
-                    dcc.RangeSlider(
-                        id="elo_slider",
-                        min=min_elo,
-                        max=max_elo,
-                        value=[min_elo, max_elo],
-                        step=10,
-                        pushable=1,
-                        allowCross=False,
-                        marks={
-                            i: str(i)
-                            for i in range(
-                                int(min_elo) - 1,
-                                int(max_elo) + 1,
-                                int((max_elo - min_elo + 2) // 10),
-                            )
-                        }
-                    ),width={'size':8,"offset":0}
-                )
-            ],justify='around',style={"margin-bottom": "25px"}
-        ),        
+                        dbc.Row(dbc.Col()),
                         dbc.Row(
                             [
-                                dbc.Col(html.Div("Game duration Slider (Moves)"), width={"size": 4}),
+                                dbc.Col(html.Div("Elo range:"), width={"size": 4}),
+                                dbc.Col(
+                                    dcc.RangeSlider(
+                                        id="elo_slider",
+                                        min=min_elo,
+                                        max=max_elo,
+                                        value=[min_elo, max_elo],
+                                        step=10,
+                                        pushable=1,
+                                        allowCross=False,
+                                        marks={
+                                            i: str(i)
+                                            for i in range(
+                                                int(min_elo) - 1,
+                                                int(max_elo) + 1,
+                                                int((max_elo - min_elo + 2) // 10),
+                                            )
+                                        },
+                                    ),
+                                    width={"size": 8, "offset": 0},
+                                ),
+                            ],
+                            justify="around",
+                            style={"margin-bottom": "25px"},
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.Div("Game duration Slider (Moves)"),
+                                    width={"size": 4},
+                                ),
                                 dbc.Col(
                                     dcc.RangeSlider(
                                         id="moves_slider",
@@ -204,17 +234,23 @@ app.layout = html.Div(
                                         marks={i: str(i) for i in range(0, 50, 5)},
                                     ),
                                     width={"size": 8, "offset": 0},
-                                )
-                            ],justify='center',style={"margin-bottom": "25px"}
+                                ),
+                            ],
+                            justify="center",
+                            style={"margin-bottom": "25px"},
                         ),
-                    ],width={'size':6,'offset':0}
+                    ],
+                    width={"size": 6, "offset": 0},
                 ),
             ]
         ),
         dbc.Row(
             [
-                dbc.Col(html.Div("Total Number of Games:"), width={"size":"Auto","offset":6}),
-                dbc.Col(html.Div(id="game_count"), width={"size": "Auto",'offset':1}),
+                dbc.Col(
+                    html.Div("Total Number of Games:"),
+                    width={"size": "Auto", "offset": 6},
+                ),
+                dbc.Col(html.Div(id="game_count"), width={"size": "Auto", "offset": 1}),
             ]
         ),
     ]
