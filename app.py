@@ -448,7 +448,7 @@ popover_game_type = dbc.Popover(
 )
 
 about_this = dbc.Row(
-    style={"margin-left": "auto", "margin-right": '0px'},
+    justify="end",
     children=[
         dbc.Button(str("About this Visualization").upper(), id="abt_us"),
         dbc.Popover(
