@@ -19,16 +19,31 @@ from styles import *
 # Read the .csv file with the preprocessed data.
 url = "https://raw.githubusercontent.com/Exileus/DataVis2021_proj2/main/chess_app.csv"
 df_original = pd.read_csv(
-    url, sep=",", dtype={"pawns": int, "knights": int, "bishops": int, "rooks": int, "queens": int},
-    converters={"wKing_sqr": ast.literal_eval, "bKing_sqr": ast.literal_eval,
-                "wQueen_sqr": ast.literal_eval, "bQueen_sqr": ast.literal_eval,
-                "wRook_sqr": ast.literal_eval, "bRook_sqr": ast.literal_eval,
-                "wRook2_sqr": ast.literal_eval, "bRook2_sqr": ast.literal_eval,
-                "wBishop_sqr": ast.literal_eval, "bBishop_sqr": ast.literal_eval,
-                "wBishop2_sqr": ast.literal_eval, "bBishop2_sqr": ast.literal_eval,
-                "wKnight_sqr": ast.literal_eval, "bKnight_sqr": ast.literal_eval,
-                "wKnight2_sqr": ast.literal_eval, "bKnight2_sqr": ast.literal_eval}
+    url,
+    sep=",",
+    dtype={"pawns": int, "knights": int, "bishops": int, "rooks": int, "queens": int},
+    converters={
+        "wKing_sqr": ast.literal_eval,
+        "bKing_sqr": ast.literal_eval,
+        "wQueen_sqr": ast.literal_eval,
+        "bQueen_sqr": ast.literal_eval,
+        "wRook_sqr": ast.literal_eval,
+        "bRook_sqr": ast.literal_eval,
+        "wRook2_sqr": ast.literal_eval,
+        "bRook2_sqr": ast.literal_eval,
+        "wBishop_sqr": ast.literal_eval,
+        "bBishop_sqr": ast.literal_eval,
+        "wBishop2_sqr": ast.literal_eval,
+        "bBishop2_sqr": ast.literal_eval,
+        "wKnight_sqr": ast.literal_eval,
+        "bKnight_sqr": ast.literal_eval,
+        "wKnight2_sqr": ast.literal_eval,
+        "bKnight2_sqr": ast.literal_eval,
+    },
 )
+
+# Calculate min and max elo
+min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
 
 # Define function to output an 8*8 dataframe based on a df and a list of column names to parse.
 
@@ -52,11 +67,16 @@ g_piece = "King"
 
 # Define a dictionary to be used to update the board with the correct columns.
 color_piece_dict = cp_dict = {
-    ("white_color", "King"): ["wKing_sqr"], ("black_color", "King"): ["bKing_sqr"],
-    ("white_color", "Queen"): ["wQueen_sqr"], ("black_color", "Queen"): ["bQueen_sqr"],
-    ("white_color", "Rook"): ["wRook_sqr", "wRook2_sqr"], ("black_color", "Rook"): ["bRook_sqr", "bRook2_sqr"],
-    ("white_color", "Bishop"): ["wBishop_sqr", "wBishop2_sqr"], ("black_color", "Bishop"): ["bBishop_sqr", "bBishop2_sqr"],
-    ("white_color", "Knight"): ["wKnight_sqr", "wKnight2_sqr"], ("black_color", "Knight"): ["bKnight_sqr", "bKnight2_sqr"]
+    ("white_color", "King"): ["wKing_sqr"],
+    ("black_color", "King"): ["bKing_sqr"],
+    ("white_color", "Queen"): ["wQueen_sqr"],
+    ("black_color", "Queen"): ["bQueen_sqr"],
+    ("white_color", "Rook"): ["wRook_sqr", "wRook2_sqr"],
+    ("black_color", "Rook"): ["bRook_sqr", "bRook2_sqr"],
+    ("white_color", "Bishop"): ["wBishop_sqr", "wBishop2_sqr"],
+    ("black_color", "Bishop"): ["bBishop_sqr", "bBishop2_sqr"],
+    ("white_color", "Knight"): ["wKnight_sqr", "wKnight2_sqr"],
+    ("black_color", "Knight"): ["bKnight_sqr", "bKnight2_sqr"],
 }
 
 
@@ -66,83 +86,159 @@ external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
-#app.title = "Chess Analytics"
+# app.title = "Chess Analytics"
 
 
 # Defining app layout
 # A simple app for simple purposes.
-app.layout = html.Div([
-    dbc.Row([dbc.Col(html.H2("A Visualization of Endgame Chess Pieces"),width={'size':6,'offset':0}),
-             dbc.Col(html.Img(src="/assets/chess-app-small.jpg"),width={'size':3,'offset':2,'order':'last'}
-            ),
-        ]),
-    dbc.Row([dbc.Col([html.H3("Input for choice of color"),
-                     dbc.ButtonGroup([dbc.Button("White", color="Secondary", n_clicks=0, id="white_color"),
-                                      dbc.Button(
-                                          "Black", color="Secondary", n_clicks=0, id="black_color")
-                                      ])
-                      ],
-                     width={'size': 6, 'offset': 0, 'order': 1}
-                     )
-             ]),
-    dbc.Row([dbc.Col(html.H3("Elo range:"),
-                     width={'size': 4, 'offset': 0}),
-             dbc.Col(
-        dcc.RangeSlider(
-            id="elo_slider",
-            min=min_elo,
-            max=max_elo,
-            value=[min_elo, max_elo],
-            step=10,
-            pushable=1,
-            allowCross=False,
-            marks={
-                i: str(i)
-                for i in range(
-                    int(min_elo) - 1,
-                    int(max_elo) + 1,
-                    int((max_elo - min_elo + 2) // 10),
-                )
-            },
+app.layout = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.H2("A Visualization of Endgame Chess Pieces"),
+                    width={"size": 6, "offset": 0},
+                ),
+                dbc.Col(
+                    html.Img(src="/assets/chess-app-small.jpg"),
+                    width={"size": 3, "offset": 2, "order": "last"},
+                ),
+            ]
         ),
-        width={"size": 10, "offset": 1},
-    )
-    ]),
-    dbc.Row([dbc.Col(dcc.RangeSlider(id="moves_slider", min=1, max=50, value=[8, 30], step=1,
-                                     pushable=1, allowCross=False,
-                                     marks={i: str(i) for i in range(0, 50, 5)}
-                                     ),
-                     width={'size': 10, 'offset': 1}
-                     )
-             ]),
-    dbc.Row([dbc.Col(dbc.ButtonGroup([dbc.Button("King", color="Secondary", n_clicks=0, id="King"),
-                                      dbc.Button(
-                                          "Queen", color="Secondary", n_clicks=0, id="Queen"),
-                                      dbc.Button(
-                                          "Rook", color="Secondary", n_clicks=0, id="Rook"),
-                                      dbc.Button(
-                                          "Bishop", color="Secondary", n_clicks=0, id="Bishop"),
-                                      dbc.Button(
-                                          "Knight", color="Secondary", n_clicks=0, id="Knight")
-                                      ])
-                     )
-             ]),
-    dbc.Row([dbc.Col(dcc.Graph(id="chessboard"),
-                     width={'size':6,'order':'last'}),
-             dbc.Col([
-                 dbc.Row(dbc.Col(dbc.Button("A button with size 12, does it spill over somewhere?",color="dark"),
-                             width={'size':12})),
-                 dbc.Row(dbc.Col(dbc.Button("A button with size 6, does it go somewhere?",color="dark"),
-                             width={'size':3})),
-                 dbc.Row(dbc.Col(dcc.RangeSlider(min=1,max=10,value=[5,7],step=1),
-                                 width={"size":"Auto"}))
-                         ])
-        ]),
-    dbc.Row([dbc.Col(html.H3("Total Number of Games: "),width={'size':'Auto'}),
-             dbc.Col(html.H3(id="game_count"),
-                     width={"size": "Auto"})
-             ])
-])
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H3("Input for choice of color"),
+                        dbc.ButtonGroup(
+                            [
+                                dbc.Button(
+                                    "White",
+                                    color="Secondary",
+                                    n_clicks=0,
+                                    id="white_color",
+                                ),
+                                dbc.Button(
+                                    "Black",
+                                    color="Secondary",
+                                    n_clicks=0,
+                                    id="black_color",
+                                ),
+                            ]
+                        ),
+                    ],
+                    width={"size": 6, "offset": 0, "order": 1},
+                )
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.H3("Elo range:"), width={"size": 4, "offset": 0}),
+                dbc.Col(
+                    dcc.RangeSlider(
+                        id="elo_slider",
+                        min=min_elo,
+                        max=max_elo,
+                        value=[min_elo, max_elo],
+                        step=10,
+                        pushable=1,
+                        allowCross=False,
+                        marks={
+                            i: str(i)
+                            for i in range(
+                                int(min_elo) - 1,
+                                int(max_elo) + 1,
+                                int((max_elo - min_elo + 2) // 10),
+                            )
+                        },
+                    ),
+                    width={"size": 10, "offset": 1},
+                ),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.RangeSlider(
+                        id="moves_slider",
+                        min=1,
+                        max=50,
+                        value=[8, 30],
+                        step=1,
+                        pushable=1,
+                        allowCross=False,
+                        marks={i: str(i) for i in range(0, 50, 5)},
+                    ),
+                    width={"size": 10, "offset": 1},
+                )
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.ButtonGroup(
+                        [
+                            dbc.Button(
+                                "King", color="Secondary", n_clicks=0, id="King"
+                            ),
+                            dbc.Button(
+                                "Queen", color="Secondary", n_clicks=0, id="Queen"
+                            ),
+                            dbc.Button(
+                                "Rook", color="Secondary", n_clicks=0, id="Rook"
+                            ),
+                            dbc.Button(
+                                "Bishop", color="Secondary", n_clicks=0, id="Bishop"
+                            ),
+                            dbc.Button(
+                                "Knight", color="Secondary", n_clicks=0, id="Knight"
+                            ),
+                        ]
+                    )
+                )
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(dcc.Graph(id="chessboard"), width={"size": 6, "order": "last"}),
+                dbc.Col(
+                    [
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.Button(
+                                    "A button with size 12, does it spill over somewhere?",
+                                    color="dark",
+                                ),
+                                width={"size": 12},
+                            )
+                        ),
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.Button(
+                                    "A button with size 6, does it go somewhere?",
+                                    color="dark",
+                                ),
+                                width={"size": 3},
+                            )
+                        ),
+                        dbc.Row(
+                            dbc.Col(
+                                dcc.RangeSlider(min=1, max=10, value=[5, 7], step=1),
+                                width={"size": "Auto"},
+                            )
+                        ),
+                    ]
+                ),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto"}),
+                dbc.Col(html.H3(id="game_count"), width={"size": "Auto"}),
+            ]
+        ),
+    ]
+)
 
 
 @app.callback(
@@ -184,8 +280,7 @@ def update_chessboard(
     global g_color
     global g_piece
 
-    trigger_button = dash.callback_context.triggered[0]['prop_id'].split('.')[
-        0]
+    trigger_button = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if trigger_button in ["white_color", "black_color"]:
         g_color = trigger_button
     if trigger_button in ["King", "Queen", "Rook", "Bishop", "Knight"]:
@@ -194,8 +289,11 @@ def update_chessboard(
     df = board_output(dff, cp_dict[g_color, g_piece])
 
     # Transform it for the heatmap.
-    df = df.stack().reset_index().rename(
-        columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
+    df = (
+        df.stack()
+        .reset_index()
+        .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
+    )
     chessboard = getChessboard()
     chessboard.add_trace(getHeatmap(dataframe=df))
 
