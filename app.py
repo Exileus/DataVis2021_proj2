@@ -80,10 +80,8 @@ app.layout = html.Div([
                      dbc.ButtonGroup([dbc.Button("White",color="Secondary",n_clicks=0,id="white_color"),
                                       dbc.Button("Black",color="Secondary",n_clicks=0,id="black_color")
                                       ])
-                     ]
-                     width={'size':6,'offset':0,'order:'1}
-                     ),
-             dbc.Col(
+                     ],
+                     width={'size':6,'offset':0,'order':1}                     
                      )
              ]),
     dbc.Row([dbc.Col(html.H3("Elo range:"),
