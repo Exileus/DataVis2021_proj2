@@ -114,13 +114,13 @@ app.layout = html.Div(
                             [
                                 dbc.Button(
                                     "White",
-                                    color="Secondary",
+                                    color="light",
                                     n_clicks=0,
                                     id="white_color",
                                 ),
                                 dbc.Button(
                                     "Black",
-                                    color="Secondary",
+                                    color="dark",
                                     n_clicks=0,
                                     id="black_color",
                                 ),
@@ -150,42 +150,33 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(
-                    dbc.ButtonGroup(
-                        [
-                            dbc.Button(
-                                "King", color="Secondary", n_clicks=0, id="King"
-                            ),
-                            dbc.Button(
-                                "Queen", color="Secondary", n_clicks=0, id="Queen"
-                            ),
-                            dbc.Button(
-                                "Rook", color="Secondary", n_clicks=0, id="Rook"
-                            ),
-                            dbc.Button(
-                                "Bishop", color="Secondary", n_clicks=0, id="Bishop"
-                            ),
-                            dbc.Button(
-                                "Knight", color="Secondary", n_clicks=0, id="Knight"
-                            ),
-                        ]
-                    )
-                )
-            ]
-        ),
-        dbc.Row(
-            [
                 dbc.Col(dcc.Graph(id="chessboard"), width={"size": 6, "order": "last"}),
                 dbc.Col(
                     [
                         dbc.Row(
-                            dbc.Col(
-                                dbc.Button(
-                                    "A button with size 12, does it spill over somewhere?",
-                                    color="dark",
-                                ),
-                                width={"size": 12},
-                            )
+                            [
+                                dbc.Col(
+                                    dbc.ButtonGroup(
+                                        [
+                                            dbc.Button(
+                                                "King", color="secondary", n_clicks=0, id="King"
+                                            ),
+                                            dbc.Button(
+                                                "Queen", color="dark", n_clicks=0, id="Queen"
+                                            ),
+                                            dbc.Button(
+                                                "Rook", color="primary", n_clicks=0, id="Rook"
+                                            ),
+                                            dbc.Button(
+                                                "Bishop", color="dark", n_clicks=0, id="Bishop"
+                                            ),
+                                            dbc.Button(
+                                                "Knight", color="Secondary", n_clicks=0, id="Knight"
+                                            ),
+                                        ]
+                                    )
+                                )
+                            ]
                         ),
                         dbc.Row(
                             dbc.Col(
@@ -193,7 +184,7 @@ app.layout = html.Div(
                                     "A button with size 6, does it go somewhere?",
                                     color="dark",
                                 ),
-                                width={"size": 3},
+                                width={"size":6},
                             )
                         ),
                         dbc.Row(
@@ -227,7 +218,7 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto"}),
+                dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto","offset":6}),
                 dbc.Col(html.H3(id="game_count"), width={"size": "Auto"}),
             ]
         ),
