@@ -5,7 +5,7 @@ import ast
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 import pandas as pd
 import numpy as np
@@ -13,7 +13,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from whitenoise import WhiteNoise
 
-from chessboard import getChessboard, getHeatmap
+from chessboard import getChessboard, getHeatmap, getStackedBar, getBoard
 from styles import *
 
 # Read the .csv file with the preprocessed data.
@@ -44,6 +44,7 @@ df_original = pd.read_csv(
 
 # Calculate min and max elo
 min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
+max_moves = df_original["moves"].max()
 
 # Define function to output an 8*8 dataframe based on a df and a list of column names to parse.
 
@@ -63,8 +64,7 @@ def board_output(df, col_list):
 # Define global variables for later.
 g_color = "white_color"
 g_piece = "King"
-g_status,g_winner,g_time_control,g_game_type = ".*",".*",".*",".*"
-
+g_status, g_winner, g_time_control, g_game_type = ".*", ".*", ".*", ".*"
 
 # Define a dictionary to be used to update the board with the correct columns.
 color_piece_dict = cp_dict = {
@@ -82,276 +82,332 @@ color_piece_dict = cp_dict = {
 
 # Define an additional dict for dropdown status to use for callbacks.
 dropdown_status_dict = st_dict = {
-    "st_all":".*",
-    "st_draw":"draw",
-    "st_mate":"mate",
-    "st_resign":"resign",
-    "st_outoftime":"outoftime"
+    "st_all": ".*",
+    "st_draw": "draw",
+    "st_mate": "mate",
+    "st_resign": "resign",
+    "st_outoftime": "outoftime",
 }
 
 dropdown_winner_dict = wn_dict = {
-    "wn_all":".*",
-    "wn_white":"white",
-    "wn_black":"black",
+    "wn_all": ".*",
+    "wn_white": "white",
+    "wn_black": "black",
 }
 
 
 dropdown_time_control_dict = tc_dict = {
-    "tc_all":".*",
-    "tc_bullet":"Bullet",
-    "tc_blitz":"Blitz",
-    "tc_classic":"Classical",
-    "tc_none":"Correspondence"
+    "tc_all": ".*",
+    "tc_bullet": "Bullet",
+    "tc_blitz": "Blitz",
+    "tc_classic": "Classical",
+    "tc_none": "Correspondence",
 }
 
 dropdown_game_type_dict = gt_dict = {
-    "gt_all":".*",
-    "gt_std":"game",
-    "gt_tourney":"tournament",
+    "gt_all": ".*",
+    "gt_std": "game",
+    "gt_tourney": "tournament",
 }
-
-## Define components for the app.
-dropdown_status= dbc.DropdownMenu(
-                                    [
-                                        dbc.DropdownMenuItem("Status",header=True),
-                                        dbc.DropdownMenuItem("All",id="st_all",n_clicks=0),
-                                        dbc.DropdownMenuItem("Draws",id="st_draw",n_clicks=0),
-                                        dbc.DropdownMenuItem("Checkmate",id="st_mate",n_clicks=0),
-                                        dbc.DropdownMenuItem("Resignation",id="st_resign",n_clicks=0),
-                                        dbc.DropdownMenuItem("Time Forfeit",id="st_outoftime",n_clicks=0)
-                                        ],label="Status")
-
-dropdown_winner= dbc.Collapse(dbc.DropdownMenu(
-                                    [
-                                        dbc.DropdownMenuItem("Winning Side",header=True),
-                                        dbc.DropdownMenuItem("All",id="wn_all",n_clicks=0),
-                                        dbc.DropdownMenuItem("White",id="wn_white",n_clicks=0),
-                                        dbc.DropdownMenuItem("Black",id="wn_black",n_clicks=0)
-                                    ]
-                                    ,label="Winning Side"
-                                    ),
-    id="wn_menu"
-    )
-
-dropdown_time_control = dbc.DropdownMenu(
-                                    [
-                                        dbc.DropdownMenuItem("Time Control",header=True),
-                                        dbc.DropdownMenuItem("All",id="tc_all",n_clicks=0),
-                                        dbc.DropdownMenuItem("Bullet",id="tc_bullet",n_clicks=0),
-                                        dbc.DropdownMenuItem("Blitz",id="tc_blitz",n_clicks=0),
-                                        #dbc.DropdownMenuItem("Rapid",id="tc_rpd",n_clicks=0), if this shows up later then include it.
-                                        dbc.DropdownMenuItem("Classical",id="tc_classic",n_clicks=0),
-                                        dbc.DropdownMenuItem("No Time Control",id="tc_none",n_clicks=0)
-                                                                             
-                                        ],label="Time Control")
-
-dropdown_game_type = dbc.DropdownMenu(
-                                    [
-                                        dbc.DropdownMenuItem("Game Type",header=True),
-                                        dbc.DropdownMenuItem("All",id="gt_all",n_clicks=0),
-                                        dbc.DropdownMenuItem("Standard",id="gt_std",n_clicks=0),
-                                        dbc.DropdownMenuItem("Tournament",id="gt_tourney",n_clicks=0),                          
-                                        ],label="Game Type")
-
 
 # Set stylesheets and app.
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 external_stylesheets = [dbc.themes.LUX]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = "CHESS KINGDOM"
 server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
-# app.title = "Chess Analytics"
+
+
+# Defining app layout
+margin_bottom = "50px"
+
+# Banner
+
+banner = dbc.Row(
+    children=[
+        dbc.Col(
+            html.Img(
+                src="/assets/apple-touch-icon.png",
+                id="logo",
+                style={"border-radius": "50%"},
+            ),
+            width=2,
+            align="left",
+        ),
+        dbc.Col(
+            html.H1("A Visualization of Endgame Chess Pieces"),
+            align="center",
+            width=10,
+        ),
+    ],
+    style={"margin-bottom": "50px", "margin-top": "-30px"},
+    align="center",
+)
+
+# Graph
+graph = dcc.Graph(
+    id="chessboard",
+    config={
+        "displayModeBar": False,
+        "scrollZoom": False,
+        "showAxisDragHandles": False,
+    },
+)
+
+# Stacked Bar
+stacked_graph = dcc.Graph(
+    id="stackedbar",
+    config={
+        "displayModeBar": False,
+        "scrollZoom": False,
+        "showAxisDragHandles": False,
+    },
+)
 
 #
-# Defining app layout
-# A simple app for simple purposes.
-app.layout = html.Div(
-    [dbc.Jumbotron([dbc.Row(
+c_white_black = dbc.Col(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        html.Div("Pieces to Visualize"),
+        dbc.ButtonGroup(
             [
-                dbc.Col(
-                    html.H2("A Visualization of Endgame Chess Pieces"),
-                    width={"size": 6, "offset": 0},
-                    align="end",
+                dbc.Button(
+                    "White",
+                    color="secondary",
+                    n_clicks=0,
+                    id="white_color",
+                    outline=False,
+                    active=False
                 ),
-                dbc.Col(
-                    html.Img(src="/assets/chess-app-small.jpg"),
-                    width={"size": 3, "offset": 2, "order": "last"},
+                dbc.Button(
+                    "Black",
+                    color="dark",
+                    n_clicks=0,
+                    id="black_color",
+                    outline=False,
+                    active=False
                 ),
-            ],
-            style={"margin-bottom": "25px"},
+            ]
         ),
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Div("Pieces to Visualize"),
-                        dbc.ButtonGroup(
-                            [
-                                dbc.Button(
-                                    "White",
-                                    color="secondary",
-                                    n_clicks=0,
-                                    id="white_color",
-                                    outline=True,
-                                ),
-                                dbc.Button(
-                                    "Black",
-                                    color="dark",
-                                    n_clicks=0,
-                                    id="black_color",
-                                    outline=True,
-                                ),
-                            ]
-                        ),
-                    ],
-                    width={"size": 4, "offset": 7},
+    ],
+)
+
+piece_selector = dbc.ButtonGroup(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        dbc.Button(
+            "King",
+            color=(button_color := "primary"),
+            n_clicks=0,
+            active=True,
+            outline=True,
+            id="King",
+        ),
+        dbc.Button(
+            "Queen",
+            color=button_color,
+            n_clicks=0,
+            active=False,
+            id="Queen",
+        ),
+        dbc.Button(
+            "Rook",
+            color=button_color,
+            n_clicks=0,
+            active=False,
+            id="Rook",
+        ),
+        dbc.Button(
+            "Bishop",
+            color=button_color,
+            n_clicks=0,
+            active=False,
+            id="Bishop",
+        ),
+        dbc.Button(
+            "Knight",
+            color=button_color,
+            n_clicks=0,
+            active=False,
+            id="Knight",
+        ),
+    ],
+)
+c_elo_slider = dbc.Col(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        html.Div("Elo range:"),
+        dcc.RangeSlider(
+            id="elo_slider",
+            min=min_elo,
+            max=max_elo,
+            value=[min_elo, max_elo],
+            step=10,
+            pushable=1,
+            allowCross=False,
+            marks={
+                i: str(i)
+                for i in range(
+                    int(min_elo) - 1,
+                    int(max_elo) + 1,
+                    int((max_elo - min_elo + 2) // 10),
                 )
+            },
+        ),
+    ],
+)
+c_moves_slider = dbc.Col(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        html.Div("Game duration Slider (Moves)"),
+        dcc.RangeSlider(
+            id="moves_slider",
+            min=1,
+            max=max_moves,
+            value=[0, max_moves],
+            step=1,
+            pushable=1,
+            allowCross=False,
+            marks={i: str(i) for i in range(0, max_moves, 5)},
+        ),
+    ],
+)
+
+text_margin = "6px"
+c_total_games = dbc.Row(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        dbc.Col(
+            style={"margin-bottom": margin_bottom},
+            children=[
+                html.Div(id="game_count"),
+                html.Div("Total Games", style={"margin-left": text_margin}),
             ],
-            justify="center",
         ),
-        dbc.Row(
-            [
-                dbc.Col(
-                    dcc.Graph(
-                        id="chessboard",
-                        config={
-                            "displayModeBar": False,
-                            "scrollZoom": False,
-                            "showAxisDragHandles": False,
-                        },
-                    ),
-                    width={"size": 6, "order": "last"},
-                ),
-                dbc.Col(
-                    [
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    dbc.ButtonGroup(
-                                        [
-                                            dbc.Button(
-                                                "King",
-                                                color=(button_color := "primary"),
-                                                n_clicks=0,
-                                                outline=True,
-                                                id="King",
-                                            ),
-                                            dbc.Button(
-                                                "Queen",
-                                                color=button_color,
-                                                n_clicks=0,
-                                                outline=True,
-                                                id="Queen",
-                                            ),
-                                            dbc.Button(
-                                                "Rook",
-                                                color=button_color,
-                                                n_clicks=0,
-                                                outline=True,
-                                                id="Rook",
-                                            ),
-                                            dbc.Button(
-                                                "Bishop",
-                                                color=button_color,
-                                                n_clicks=0,
-                                                outline=True,
-                                                id="Bishop",
-                                            ),
-                                            dbc.Button(
-                                                "Knight",
-                                                color=button_color,
-                                                n_clicks=0,
-                                                outline=True,
-                                                id="Knight",
-                                            ),
-                                        ]
-                                    ),
-                                    width={"size": "Auto", "offset": 0},
-                                )
-                            ],
-                            justify="center",
-                            style={"margin-bottom": "25px"},
-                        ),
-                        dbc.Row(dbc.Col()),
-                        dbc.Row(
-                            [
-                                dbc.Col(html.Div("Elo range:"), width={"size": 4}),
-                                dbc.Col(
-                                    dcc.RangeSlider(
-                                        id="elo_slider",
-                                        min=min_elo,
-                                        max=max_elo,
-                                        value=[min_elo, max_elo],
-                                        step=10,
-                                        pushable=1,
-                                        allowCross=False,
-                                        marks={
-                                            i: str(i)
-                                            for i in range(
-                                                int(min_elo) - 1,
-                                                int(max_elo) + 1,
-                                                int((max_elo - min_elo + 2) // 10),
-                                            )
-                                        },
-                                    ),
-                                    width={"size": 8, "offset": 0},
-                                ),
-                            ],
-                            justify="around",
-                            style={"margin-bottom": "25px"},
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    html.Div("Game duration Slider (Moves)"),
-                                    width={"size": 4},
-                                ),
-                                dbc.Col(
-                                    dcc.RangeSlider(
-                                        id="moves_slider",
-                                        min=1,
-                                        max=50,
-                                        value=[8, 30],
-                                        step=1,
-                                        pushable=1,
-                                        allowCross=False,
-                                        marks={i: str(i) for i in range(0, 50, 5)},
-                                    ),
-                                    width={"size": 8, "offset": 0},
-                                ),
-                            ],
-                            justify="center",
-                            style={"margin-bottom": "25px"},
-                        ),
-                        dbc.Row([
-                            dbc.Col(dropdown_status),
-                            dbc.Col(dropdown_winner),
-                            dbc.Col(dropdown_time_control),
-                            dbc.Col(dropdown_game_type)
-                            ],
-                                justify="center")
-                    ],
-                    width={"size": 6, "offset": 0},
-                ),
-            ]
+        dbc.Col(
+            style={"margin-bottom": margin_bottom},
+            children=[
+                html.Div(id="white_wins"),
+                html.Div("Wins by White", style={"margin-left": text_margin}),
+            ],
         ),
-        dbc.Row(
-            [
+        dbc.Col(
+            style={"margin-bottom": margin_bottom},
+            children=[
+                html.Div(id="black_wins"),
+                html.Div("Wins by Black", style={"margin-left": text_margin}),
+            ],
+        ),
+        dbc.Col(
+            style={"margin-bottom": margin_bottom},
+            children=[
+                html.Div(id="draw"),
+                html.Div("Draws", style={"margin-left": text_margin}),
+            ],
+        ),
+    ],
+)
+
+dropdown_status = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Status", header=True),
+        dbc.DropdownMenuItem("All", id="st_all", n_clicks=0),
+        dbc.DropdownMenuItem("Draws", id="st_draw", n_clicks=0),
+        dbc.DropdownMenuItem("Checkmate", id="st_mate", n_clicks=0),
+        dbc.DropdownMenuItem("Resignation", id="st_resign", n_clicks=0),
+        dbc.DropdownMenuItem("Time Forfeit", id="st_outoftime", n_clicks=0),
+    ],
+    label="Status",
+)
+
+dropdown_winner = dbc.Collapse(
+    dbc.DropdownMenu(
+        [
+            dbc.DropdownMenuItem("Winning Side", header=True),
+            dbc.DropdownMenuItem("All", id="wn_all", n_clicks=0),
+            dbc.DropdownMenuItem("White", id="wn_white", n_clicks=0),
+            dbc.DropdownMenuItem("Black", id="wn_black", n_clicks=0),
+        ],
+        label="Winning Side",
+    ),
+    id="wn_menu",
+)
+
+dropdown_time_control = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Time Control", header=True),
+        dbc.DropdownMenuItem("All", id="tc_all", n_clicks=0),
+        dbc.DropdownMenuItem("Bullet", id="tc_bullet", n_clicks=0),
+        dbc.DropdownMenuItem("Blitz", id="tc_blitz", n_clicks=0),
+        # dbc.DropdownMenuItem("Rapid",id="tc_rpd",n_clicks=0), if this shows up later then include it.
+        dbc.DropdownMenuItem("Classical", id="tc_classic", n_clicks=0),
+        dbc.DropdownMenuItem("No Time Control", id="tc_none", n_clicks=0),
+    ],
+    label="Time Control",
+)
+
+dropdown_game_type = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Game Type", header=True),
+        dbc.DropdownMenuItem("All", id="gt_all", n_clicks=0),
+        dbc.DropdownMenuItem("Standard", id="gt_std", n_clicks=0),
+        dbc.DropdownMenuItem("Tournament", id="gt_tourney", n_clicks=0),
+    ],
+    label="Game Type",
+)
+
+dropdown_menus = dbc.Row(
+    style={"margin-bottom": margin_bottom},
+    children=[
+        dropdown_status,
+        dropdown_winner,
+        dropdown_time_control,
+        dropdown_game_type,
+    ],
+)
+
+app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
+    children=[
+        # Banner
+        # Main Layout
+        dbc.Row(  # ADD SETTINGS HERE
+            children=[
+                # PARAMETER SETTINGS COLUMN
                 dbc.Col(
-                    html.Div("Total Number of Games:"),
-                    width={"size": "Auto", "offset": 6},
+                    children=[
+                        banner,
+                        c_white_black,
+                        piece_selector,
+                        c_elo_slider,
+                        c_moves_slider,
+                        dropdown_menus,
+                        c_total_games,
+                        stacked_graph
+                    ]
                 ),
-                dbc.Col(html.Div(id="game_count"), width={"size": "Auto", "offset": 1}),
-            ]
-        ),])
-        
-    ]
+                # CHESS BOARD COLUMN
+                dbc.Col(width={"size": 6}, children=[graph]),
+            ],
+        ),
+    ],
 )
 
 @app.callback(
     Output("chessboard", "figure"),
+    Output("stackedbar", "figure"),
     Output("game_count", "children"),
+    Output("white_wins", "children"),
+    Output("black_wins", "children"),
+    Output("draw", "children"),
     Output("wn_menu", "is_open"),
+    Output('white_color','active'),
+    Output('black_color','active'),
+    Output('King','active'),
+    Output('Queen','active'),
+    Output('Rook','active'),
+    Output('Bishop','active'),
+    Output('Knight','active'),
     Input("white_color", "n_clicks"),
     Input("black_color", "n_clicks"),
     Input("King", "n_clicks"),
@@ -377,7 +433,6 @@ app.layout = html.Div(
     Input("gt_all", "n_clicks"),
     Input("gt_std", "n_clicks"),
     Input("gt_tourney", "n_clicks"),
-    
 )
 def update_chessboard(
     white_color,
@@ -404,32 +459,28 @@ def update_chessboard(
     tc_none,
     gt_all,
     gt_std,
-    gt_tourney
-    
+    gt_tourney,
 ):
-    
-    
     # Trigger button here, for when a button is pressed.
     trigger_button = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    
-    # Global variables that are called.
+
     global g_status
     global g_winner
     global g_time_control
     global g_game_type
-       
+
     if trigger_button in st_dict.keys():
         g_status = st_dict[trigger_button]
-        
+
     elif trigger_button in wn_dict.keys():
         g_winner = wn_dict[trigger_button]
-        
+
     elif trigger_button in tc_dict.keys():
         g_time_control = tc_dict[trigger_button]
-        
+
     elif trigger_button in gt_dict.keys():
         g_game_type = gt_dict[trigger_button]
-    
+
     # Filters go here.
     dff = df_original[
         (df_original["avg_Elo"] >= int(elo_range[0]))
@@ -442,28 +493,49 @@ def update_chessboard(
         & (df_original["Event"].str.contains(g_game_type))
     ]
 
-
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
+    game_results = dff.Winner.value_counts().to_dict()
+
+    if "white" in game_results.keys():
+        white_wins = game_results["white"]
+    else:
+        white_wins = 0
+    if "black" in game_results.keys():
+        black_wins = game_results["black"]
+    else:
+        black_wins = 0
+    if "draw" in game_results.keys():
+        draw = game_results["draw"]
+    else:
+        draw = 0
+    stackedbar = getStackedBar(game_results)
 
     # Then retrieve the column of interest.
     global g_color
     global g_piece
 
-    
     if trigger_button in ["white_color", "black_color"]:
         g_color = trigger_button
     if trigger_button in ["King", "Queen", "Rook", "Bishop", "Knight"]:
         g_piece = trigger_button
 
     df = board_output(dff, cp_dict[g_color, g_piece])
-    
-    #Additionally:
+
+    # Additionally:
     if g_status == "draw":
         is_open = False
     else:
         is_open = True
-
+        
+    #Additionaly pt.2:
+    if g_color == "white_color":
+        wc_act,bc_act = True,False
+    else:
+        wc_act,bc_act = False,True
+        
+    #Additionaly pt3:
+    k_act, q_act, r_act, b_act, n_act = [x==g_piece for x in ["King", "Queen", "Rook", "Bishop", "Knight"]]
 
     # Transform it for the heatmap.
     df = (
@@ -471,12 +543,13 @@ def update_chessboard(
         .reset_index()
         .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
     )
+
     df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
-    chessboard = getChessboard()
+    chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    return chessboard, game_count, is_open
-
+    return chessboard, stackedbar, game_count, white_wins, black_wins, draw, is_open, wc_act, bc_act, k_act, q_act, r_act, b_act, n_act
+ 
 
 # Statring the dash app
 if __name__ == "__main__":
