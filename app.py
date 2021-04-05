@@ -160,7 +160,7 @@ app.layout = html.Div(
                                         ]
                                     )
                                 )
-                            ],justify="center"
+                            ],justify="center",style={"margin-bottom": "25px"}
                         ),
                         dbc.Row(
                             dbc.Col()
