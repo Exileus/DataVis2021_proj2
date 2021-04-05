@@ -87,7 +87,7 @@ server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 # app.title = "Chess Analytics"
 
-
+# 
 # Defining app layout
 # A simple app for simple purposes.
 app.layout = html.Div(
