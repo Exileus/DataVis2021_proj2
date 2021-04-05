@@ -86,12 +86,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "CHESS KINGDOM"
 server = app.server
 server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
-# app.title = "Chess Analytics"
 
-#
+
 # Defining app layout
-
-
 margin_bottom = "50px"
 
 # Banner
@@ -104,14 +101,17 @@ banner = dbc.Row(
                 id="logo",
                 style={"border-radius": "50%"},
             ),
+            width=2,
+            align="left",
         ),
         dbc.Col(
             html.H1("A Visualization of Endgame Chess Pieces"),
             align="center",
+            width=10, 
         ),
     ],
     style={"margin-bottom": "50px", "margin-top": "-30px"},
-    align="right",
+    align="center",
 )
 
 # Graph
@@ -252,13 +252,13 @@ c_dropdown = dbc.Col(
 app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
     children=[
         # Banner
-        banner,
         # Main Layout
         dbc.Row(  # ADD SETTINGS HERE
             children=[
                 # PARAMETER SETTINGS COLUMN
                 dbc.Col(
                     children=[
+                        banner,
                         c_white_black,
                         piece_selector,
                         c_elo_slider,
