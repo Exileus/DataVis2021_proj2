@@ -167,7 +167,7 @@ app.layout = html.Div(
                         ),
                         dbc.Row(
             [
-                dbc.Col(html.H3("Elo range:"), width={"size": 3, "offset": 0}),
+                dbc.Col(html.Div("Elo range:"), width={"size": 3}),
                 dbc.Col(
                     dcc.RangeSlider(
                         id="elo_slider",
@@ -185,12 +185,13 @@ app.layout = html.Div(
                                 int((max_elo - min_elo + 2) // 10),
                             )
                         }
-                    ),width={'size':7,"offset":0}
+                    ),width={'size':8,"offset":0}
                 )
             ]
         ),        
                         dbc.Row(
                             [
+                                dbc.Col(html.Div("Game duration (Moves)"), width={"size": 3}),
                                 dbc.Col(
                                     dcc.RangeSlider(
                                         id="moves_slider",
@@ -202,7 +203,7 @@ app.layout = html.Div(
                                         allowCross=False,
                                         marks={i: str(i) for i in range(0, 50, 5)},
                                     ),
-                                    width={"size": 10, "offset": 1},
+                                    width={"size": 8, "offset": 0},
                                 )
                             ]
                         ),
