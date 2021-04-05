@@ -71,7 +71,7 @@ server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 # A simple app for simple purposes.
 app.layout = html.Div([
     dbc.Row([dbc.Col(html.H2("A Visualization of Endgame Chess Pieces"),width={'size':6,'offset':0}),
-             dbc.Col(html.Img(src="/assets/chess-app.jpg"),width={'size':3,'offset':2,'order':'last'}
+             dbc.Col(html.Img(src="/assets/chess-app-small.jpg"),width={'size':3,'offset':2,'order':'last'}
             ),
         ]),
     dbc.Row([dbc.Col([html.H3("Input for choice of color"),
