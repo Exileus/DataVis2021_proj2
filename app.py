@@ -1,9 +1,3 @@
-# Because I have to learn Dash
-
-# run with python chess_app.py and visit
-# http://127.0.0.1:8050/ in your web browser.
-
-
 # Imports
 import dash
 import ast
@@ -73,20 +67,13 @@ server.wsgi_app = WhiteNoise(server.wsgi_app, root="static/")
 #app.title = "Chess Analytics"
 
 
-
-
-
-# Cols go inside rows. Rows first.
-# every page has 12 columns. 
-# width defines columns for each component.
-
 # Defining app layout
 # A simple app for simple purposes.
 app.layout = html.Div([
-    dbc.Row([dbc.Col(html.H3("Test Shit."),
+    dbc.Row([dbc.Col(html.H3("Surprise I guess."),
                     width={'size':3,'offset':0}
                     ),
-             dbc.Col(html.H3("More text shit"),
+             dbc.Col(html.H3("I need to sleep, but please make this pretty."),
                      width={'size':3,'offset':0})]
             ),
     dbc.Row([dbc.Col(html.H3("The input over there is for choice of color ->"),
