@@ -133,31 +133,6 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.H3("Elo range:"), width={"size": 4, "offset": 0}),
-                dbc.Col(
-                    dcc.RangeSlider(
-                        id="elo_slider",
-                        min=min_elo,
-                        max=max_elo,
-                        value=[min_elo, max_elo],
-                        step=10,
-                        pushable=1,
-                        allowCross=False,
-                        marks={
-                            i: str(i)
-                            for i in range(
-                                int(min_elo) - 1,
-                                int(max_elo) + 1,
-                                int((max_elo - min_elo + 2) // 10),
-                            )
-                        },
-                    ),
-                    width={"size": 10, "offset": 1},
-                ),
-            ]
-        ),
-        dbc.Row(
-            [
                 dbc.Col(
                     dcc.RangeSlider(
                         id="moves_slider",
@@ -222,11 +197,30 @@ app.layout = html.Div(
                             )
                         ),
                         dbc.Row(
-                            dbc.Col(
-                                dcc.RangeSlider(min=1, max=10, value=[5, 7], step=1),
-                                width={"size": "Auto"},
+            [
+                dbc.Col(html.H3("Elo range:"), width={"size": 3, "offset": 0}),
+                dbc.Col(
+                    dcc.RangeSlider(
+                        id="elo_slider",
+                        min=min_elo,
+                        max=max_elo,
+                        value=[min_elo, max_elo],
+                        step=10,
+                        pushable=1,
+                        allowCross=False,
+                        marks={
+                            i: str(i)
+                            for i in range(
+                                int(min_elo) - 1,
+                                int(max_elo) + 1,
+                                int((max_elo - min_elo + 2) // 10),
                             )
-                        ),
+                        },
+                    ),
+                    width={"size": 6, "offset": 1},
+                ),
+            ]
+        ),
                     ]
                 ),
             ]
