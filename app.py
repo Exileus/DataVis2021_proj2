@@ -248,6 +248,17 @@ app.layout = html.Div(
                             justify="center",
                             style={"margin-bottom": "25px"},
                         ),
+                        dbc.Row(dbc.Col(dbc.DropdownMenu(
+                                    [
+                                        dbc.DropdownMenuItem("Status",header=True),
+                                        dbc.DropdownMenuItem("All"),
+                                        dbc.DropdownMenuItem("Draws"),
+                                        dbc.DropdownMenuItem("Checkmate"),
+                                        dbc.DropdownMenuItem("Resignation"),
+                                        dbc.DropdownMenuItem("Time Forfeit"),
+                                        
+                                        ],label="Status")
+                            ))
                     ],
                     width={"size": 6, "offset": 0},
                 ),
