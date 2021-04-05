@@ -126,7 +126,7 @@ app.layout = html.Div(
                             ]
                         ),
                     ],
-                    width={"size": 6, "offset": 0},
+                    width={"size": 4, "offset": 8},
                 )
             ]
         ),
