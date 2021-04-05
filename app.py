@@ -67,7 +67,8 @@ color_piece_dict = cp_dict = {
 # Set stylesheets and app.
 external_stylesheets = [dbc.themes.BOOTSTRAP]#["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.title = "Chess Analytics"
+server = app.server
+#app.title = "Chess Analytics"
 
 
 
