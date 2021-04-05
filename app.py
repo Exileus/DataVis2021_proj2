@@ -65,7 +65,7 @@ def board_output(df, col_list):
 g_color = "white_color"
 g_piece = "King"
 g_status, g_winner, g_time_control, g_game_type = ".*", ".*", ".*", ".*"
-
+pieces_list = ["King", "Queen", "Rook", "Bishop", "Knight"]
 # Define a dictionary to be used to update the board with the correct columns.
 color_piece_dict = cp_dict = {
     ("white_color", "King"): ["wKing_sqr"],
@@ -178,11 +178,55 @@ stacked_graph = dbc.Row(
     ],
 )
 
-#
+
+text_margin = "6px"
+
+c_total_games = dbc.Row(
+    style={"margin-bottom": "20px"},
+    justify="center",
+    children=[
+        dbc.Col(
+            children=[
+                html.Div(id="game_count", style={"text-align": "center"}),
+                html.Div(
+                    "TOTAL GAMES",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
+            ],
+        ),
+        dbc.Col(
+            children=[
+                html.Div(id="white_wins", style={"text-align": "center"}),
+                html.Div(
+                    "WINS BY WHITE",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
+            ],
+        ),
+        dbc.Col(
+            children=[
+                html.Div(id="black_wins", style={"text-align": "center"}),
+                html.Div(
+                    "WINS BY BLACK",
+                    style={"margin-left": text_margin, "text-align": "center"},
+                ),
+            ],
+        ),
+        dbc.Col(
+            children=[
+                html.Div(id="draw", style={"text-align": "center"}),
+                html.Div(
+                    "DRAWS", style={"margin-left": text_margin, "text-align": "center"}
+                ),
+            ],
+        ),
+    ],
+)
+# BLACK / WHITE
 c_white_black = dbc.Col(
     style={"margin-bottom": margin_bottom},
     children=[
-        html.Div("Pieces to Visualize"),
+        html.Div(str("Choose side").upper()),
         dbc.ButtonGroup(
             [
                 dbc.Button(
@@ -190,14 +234,14 @@ c_white_black = dbc.Col(
                     color="secondary",
                     n_clicks=0,
                     id="white_color",
-                    outline=True,
+                    outline=False,
                 ),
                 dbc.Button(
                     "Black",
                     color="dark",
                     n_clicks=0,
                     id="black_color",
-                    outline=True,
+                    outline=False,
                 ),
             ]
         ),
@@ -207,41 +251,8 @@ c_white_black = dbc.Col(
 piece_selector = dbc.ButtonGroup(
     style={"margin-bottom": margin_bottom},
     children=[
-        dbc.Button(
-            "King",
-            color=(button_color := "primary"),
-            n_clicks=0,
-            outline=True,
-            id="King",
-        ),
-        dbc.Button(
-            "Queen",
-            color=button_color,
-            n_clicks=0,
-            outline=True,
-            id="Queen",
-        ),
-        dbc.Button(
-            "Rook",
-            color=button_color,
-            n_clicks=0,
-            outline=True,
-            id="Rook",
-        ),
-        dbc.Button(
-            "Bishop",
-            color=button_color,
-            n_clicks=0,
-            outline=True,
-            id="Bishop",
-        ),
-        dbc.Button(
-            "Knight",
-            color=button_color,
-            n_clicks=0,
-            outline=True,
-            id="Knight",
-        ),
+        dbc.Button(name, color="primary", n_clicks=0, outline=True, id=name)
+        for name in pieces_list
     ],
 )
 c_elo_slider = dbc.Col(
@@ -280,50 +291,6 @@ c_moves_slider = dbc.Col(
             pushable=1,
             allowCross=False,
             marks={i: str(i) for i in range(0, max_moves, 5)},
-        ),
-    ],
-)
-
-text_margin = "6px"
-
-c_total_games = dbc.Row(
-    style={"margin-bottom": "20px"},
-    justify="center",
-    children=[
-        dbc.Col(
-            children=[
-                html.Div(id="game_count", style={"text-align": "center"}),
-                html.Div(
-                    "Total Games",
-                    style={"margin-left": text_margin, "text-align": "center"},
-                ),
-            ],
-        ),
-        dbc.Col(
-            children=[
-                html.Div(id="white_wins", style={"text-align": "center"}),
-                html.Div(
-                    "Wins by White",
-                    style={"margin-left": text_margin, "text-align": "center"},
-                ),
-            ],
-        ),
-        dbc.Col(
-            children=[
-                html.Div(id="black_wins", style={"text-align": "center"}),
-                html.Div(
-                    "Wins by Black",
-                    style={"margin-left": text_margin, "text-align": "center"},
-                ),
-            ],
-        ),
-        dbc.Col(
-            children=[
-                html.Div(id="draw", style={"text-align": "center"}),
-                html.Div(
-                    "Draws", style={"margin-left": text_margin, "text-align": "center"}
-                ),
-            ],
         ),
     ],
 )
@@ -509,7 +476,7 @@ def update_chessboard(
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
     game_results = dff.Winner.value_counts().to_dict()
-    game_results_norm = np.round(dff.Winner.value_counts(normalize=True),2).to_dict()
+    game_results_norm = np.round(dff.Winner.value_counts(normalize=True), 2).to_dict()
 
     if "white" in game_results.keys():
         white_wins = game_results["white"]
