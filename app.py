@@ -147,11 +147,11 @@ banner = dbc.Row(
 
 # Graph
 graph = dbc.Row(
-    # style={"margin-bottom": "40px"},
-    justify="center",
+    style={"margin-left": "auto", "margin-right": "auto"},
     children=[
         dcc.Graph(
             id="chessboard",
+            style={"margin-left": "auto", "margin-right": "auto"},
             config={
                 "displayModeBar": False,
                 "scrollZoom": False,
@@ -270,7 +270,7 @@ c_select_piece = dbc.Col(
                 dbc.ButtonGroup(
                     children=[
                         dbc.Button(
-                            name, color="primary", n_clicks=0, outline=True, id=name
+                            name, color="danger", n_clicks=0, outline=True, id=name
                         )
                         for name in pieces_list
                     ],
@@ -280,8 +280,12 @@ c_select_piece = dbc.Col(
     ],
 )
 c_elo_slider = dbc.Col(
-    style={"margin-bottom": margin_bottom},
-    width=10,
+    style={
+        "margin-bottom": margin_bottom,
+        "margin-left": "auto",
+        "margin-right": "auto",
+    },
+    width=12,
     children=[
         html.Div(
             str("Elo range").upper(),
@@ -307,7 +311,12 @@ c_elo_slider = dbc.Col(
     ],
 )
 c_moves_slider = dbc.Col(
-    style={"margin-bottom": margin_bottom},
+    style={
+        "margin-bottom": margin_bottom,
+        "margin-left": "auto",
+        "margin-right": "auto",
+    },
+    width=12,
     children=[
         html.Div(
             str("Number of Moves").upper(),
@@ -376,6 +385,7 @@ dropdown_game_type = dbc.DropdownMenu(
 
 dropdown_menus = dbc.Row(
     style={"margin-bottom": margin_bottom},
+    justify="center",
     children=[
         dropdown_status,
         dropdown_winner,
@@ -384,7 +394,8 @@ dropdown_menus = dbc.Row(
     ],
 )
 
-app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
+app.layout = dbc.Jumbotron(
+    style={"background-color": "#ebebeb"},  # ADD SETTINGS HERE
     children=[
         # Banner
         # Main Layout
