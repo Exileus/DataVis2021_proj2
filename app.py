@@ -133,23 +133,6 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(
-                    dcc.RangeSlider(
-                        id="moves_slider",
-                        min=1,
-                        max=50,
-                        value=[8, 30],
-                        step=1,
-                        pushable=1,
-                        allowCross=False,
-                        marks={i: str(i) for i in range(0, 50, 5)},
-                    ),
-                    width={"size": 10, "offset": 1},
-                )
-            ]
-        ),
-        dbc.Row(
-            [
                 dbc.Col(dcc.Graph(id="chessboard"), width={"size": 6, "order": "last"}),
                 dbc.Col(
                     [
@@ -206,20 +189,36 @@ app.layout = html.Div(
                                 int(max_elo) + 1,
                                 int((max_elo - min_elo + 2) // 10),
                             )
-                        },
-                    ),
-                    width={"size": 6, "offset": 1},
-                ),
+                        }
+                    ),width={'size':7,"offset":0}
+                )
             ]
-        ),
-                    ]
+        ),        
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    dcc.RangeSlider(
+                                        id="moves_slider",
+                                        min=1,
+                                        max=50,
+                                        value=[8, 30],
+                                        step=1,
+                                        pushable=1,
+                                        allowCross=False,
+                                        marks={i: str(i) for i in range(0, 50, 5)},
+                                    ),
+                                    width={"size": 10, "offset": 1},
+                                )
+                            ]
+                        ),
+                    ],width={'size':6,'offset':1}
                 ),
             ]
         ),
         dbc.Row(
             [
                 dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto","offset":6}),
-                dbc.Col(html.H3(id="game_count"), width={"size": "Auto"}),
+                dbc.Col(html.H3(id="game_count"), width={"size": "Auto",'offset':1}),
             ]
         ),
     ]
