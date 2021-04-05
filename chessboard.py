@@ -31,7 +31,7 @@ def getStackedBar(dictionary):
         legend_font = dict(family="Arial", size=12, color="black"),
     )
         
-    fig.update_traces(marker_line_width=0)
+    fig.update_traces(marker_line_width=0, hovertemplate="%{x}")
     return fig
 
 def getChessboard(dimensions: int = 600, margin: int = 50):
@@ -75,7 +75,7 @@ def getChessboard(dimensions: int = 600, margin: int = 50):
             z=boardmatrix,
             hoverinfo="none",
             name="Chess Board",
-            colorscale=["white", "black"],
+            colorscale=["white", "#303030"],
             showscale=False,
         )
     )
@@ -120,7 +120,7 @@ def getHeatmap(dataframe: pd.DataFrame):
         marker_symbol="square",
         marker_line_color="#c12917",
         marker_size=freq,
-        marker_sizeref=freq.max() / 40,
+        marker_sizeref=freq.max() / 60,
         marker_sizemin=0,
         marker_sizemode="diameter",
         marker_opacity=1,
