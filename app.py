@@ -109,7 +109,7 @@ app.layout = html.Div(
             [
                 dbc.Col(
                     [
-                        html.H3("Input for choice of color"),
+                        html.div("Pieces to Visualize",style={'fontsize':13}),
                         dbc.ButtonGroup(
                             [
                                 dbc.Button(
@@ -127,7 +127,7 @@ app.layout = html.Div(
                             ]
                         ),
                     ],
-                    width={"size": 6, "offset": 0, "order": 1},
+                    width={"size": 6, "offset": 0},
                 )
             ]
         ),
@@ -162,13 +162,7 @@ app.layout = html.Div(
                             ]
                         ),
                         dbc.Row(
-                            dbc.Col(
-                                dbc.Button(
-                                    "A button with size 6, does it go somewhere?",
-                                    color="dark",
-                                ),
-                                width={"size":6},
-                            )
+                            dbc.Col()
                         ),
                         dbc.Row(
             [
@@ -218,7 +212,7 @@ app.layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto","offset":6}),
-                dbc.Col(html.H3(id="game_count"), width={"size": "Auto",'offset':1}),
+                dbc.Col(html.H3(id="game_count"), width={"size": "Auto",'offset':0}),
             ]
         ),
     ]
