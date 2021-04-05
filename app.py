@@ -349,12 +349,12 @@ c_moves_slider = dbc.Col(
 
 dropdown_status = dbc.DropdownMenu(
     [
-        dbc.DropdownMenuItem("Status", header=True),
-        dbc.DropdownMenuItem("All", id="st_all", n_clicks=0),
-        dbc.DropdownMenuItem("Draws", id="st_draw", n_clicks=0),
-        dbc.DropdownMenuItem("Checkmate", id="st_mate", n_clicks=0),
-        dbc.DropdownMenuItem("Resignation", id="st_resign", n_clicks=0),
-        dbc.DropdownMenuItem("Time Forfeit", id="st_outoftime", n_clicks=0),
+        dbc.DropdownMenuItem(str("Status",).upper(), header=True),
+        dbc.DropdownMenuItem(str("All").upper(), id="st_all", n_clicks=0),
+        dbc.DropdownMenuItem(str("Draws").upper(), id="st_draw", n_clicks=0),
+        dbc.DropdownMenuItem(str("Checkmate").upper(), id="st_mate", n_clicks=0),
+        dbc.DropdownMenuItem(str("Resignation").upper(), id="st_resign", n_clicks=0),
+        dbc.DropdownMenuItem(str("Time Forfeit").upper(), id="st_outoftime", n_clicks=0),
     ],
     label="Status",
 )
@@ -362,10 +362,10 @@ dropdown_status = dbc.DropdownMenu(
 dropdown_winner = dbc.Collapse(
     dbc.DropdownMenu(
         [
-            dbc.DropdownMenuItem("Winning Side", header=True),
-            dbc.DropdownMenuItem("All", id="wn_all", n_clicks=0),
-            dbc.DropdownMenuItem("White", id="wn_white", n_clicks=0),
-            dbc.DropdownMenuItem("Black", id="wn_black", n_clicks=0),
+            dbc.DropdownMenuItem(str("Winning Side").upper(), header=True),
+            dbc.DropdownMenuItem(str("All").upper(), id="wn_all", n_clicks=0),
+            dbc.DropdownMenuItem(str("White").upper(), id="wn_white", n_clicks=0),
+            dbc.DropdownMenuItem(str("Black").upper(), id="wn_black", n_clicks=0),
         ],
         label="Winning Side",
     ),
@@ -374,23 +374,23 @@ dropdown_winner = dbc.Collapse(
 
 dropdown_time_control = dbc.DropdownMenu(
     [
-        dbc.DropdownMenuItem("Time Control", header=True),
-        dbc.DropdownMenuItem("All", id="tc_all", n_clicks=0),
-        dbc.DropdownMenuItem("Bullet", id="tc_bullet", n_clicks=0),
-        dbc.DropdownMenuItem("Blitz", id="tc_blitz", n_clicks=0),
+        dbc.DropdownMenuItem(str("Time Control").upper(), header=True),
+        dbc.DropdownMenuItem(str("All").upper(), id="tc_all", n_clicks=0),
+        dbc.DropdownMenuItem(str("Bullet").upper(), id="tc_bullet", n_clicks=0),
+        dbc.DropdownMenuItem(str("Blitz").upper(), id="tc_blitz", n_clicks=0),
         # dbc.DropdownMenuItem("Rapid",id="tc_rpd",n_clicks=0), if this shows up later then include it.
-        dbc.DropdownMenuItem("Classical", id="tc_classic", n_clicks=0),
-        dbc.DropdownMenuItem("No Time Control", id="tc_none", n_clicks=0),
+        dbc.DropdownMenuItem(str("Classical").upper(), id="tc_classic", n_clicks=0),
+        dbc.DropdownMenuItem(str("No Time Control").upper(), id="tc_none", n_clicks=0),
     ],
     label="Time Control",
 )
 
 dropdown_game_type = dbc.DropdownMenu(
     [
-        dbc.DropdownMenuItem("Game Type", header=True),
-        dbc.DropdownMenuItem("All", id="gt_all", n_clicks=0),
-        dbc.DropdownMenuItem("Standard", id="gt_std", n_clicks=0),
-        dbc.DropdownMenuItem("Tournament", id="gt_tourney", n_clicks=0),
+        dbc.DropdownMenuItem(str("Game Type").upper(), header=True),
+        dbc.DropdownMenuItem(str("All").upper(), id="gt_all", n_clicks=0),
+        dbc.DropdownMenuItem(str("Standard").upper(), id="gt_std", n_clicks=0),
+        dbc.DropdownMenuItem(str("Tournament").upper(), id="gt_tourney", n_clicks=0),
     ],
     label="Game Type",
 )
