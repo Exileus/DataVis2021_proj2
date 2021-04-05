@@ -128,7 +128,7 @@ app.layout = html.Div(
                             ]
                         ),
                     ],
-                    width={"size": 4, "offset": 6},
+                    width={"size": 4, "offset": 7},
                 )
             ],justify="center"
         ),
@@ -160,7 +160,7 @@ app.layout = html.Div(
                                         ]
                                     )
                                 )
-                            ]
+                            ],justify="center"
                         ),
                         dbc.Row(
                             dbc.Col()
@@ -212,8 +212,8 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.H3("Total Number of Games: "), width={"size": "Auto","offset":6}),
-                dbc.Col(html.H3(id="game_count"), width={"size": "Auto",'offset':0}),
+                dbc.Col(html.div("Total Number of Games: "), width={"size":3,"offset":6}),
+                dbc.Col(html.div(id="game_count"), width={"size": "Auto",'offset':0}),
             ]
         ),
     ]
