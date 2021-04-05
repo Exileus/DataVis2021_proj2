@@ -64,6 +64,7 @@ def board_output(df, col_list):
 # Define global variables for later.
 g_color = "white_color"
 g_piece = "King"
+g_status, g_winner, g_time_control, g_game_type = ".*", ".*", ".*", ".*"
 
 # Define a dictionary to be used to update the board with the correct columns.
 color_piece_dict = cp_dict = {
@@ -79,6 +80,35 @@ color_piece_dict = cp_dict = {
     ("black_color", "Knight"): ["bKnight_sqr", "bKnight2_sqr"],
 }
 
+# Define an additional dict for dropdown status to use for callbacks.
+dropdown_status_dict = st_dict = {
+    "st_all": ".*",
+    "st_draw": "draw",
+    "st_mate": "mate",
+    "st_resign": "resign",
+    "st_outoftime": "outoftime",
+}
+
+dropdown_winner_dict = wn_dict = {
+    "wn_all": ".*",
+    "wn_white": "white",
+    "wn_black": "black",
+}
+
+
+dropdown_time_control_dict = tc_dict = {
+    "tc_all": ".*",
+    "tc_bullet": "Bullet",
+    "tc_blitz": "Blitz",
+    "tc_classic": "Classical",
+    "tc_none": "Correspondence",
+}
+
+dropdown_game_type_dict = gt_dict = {
+    "gt_all": ".*",
+    "gt_std": "game",
+    "gt_tourney": "tournament",
+}
 
 # Set stylesheets and app.
 # ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -231,31 +261,31 @@ c_moves_slider = dbc.Col(
 )
 
 text_margin = "6px"
-c_total_games = dbc.Col(
+c_total_games = dbc.Row(
     style={"margin-bottom": margin_bottom},
     children=[
-        dbc.Row(
+        dbc.Col(
             style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="game_count"),
                 html.Div("Total Games", style={"margin-left": text_margin}),
             ],
         ),
-        dbc.Row(
+        dbc.Col(
             style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="white_wins"),
                 html.Div("Wins by White", style={"margin-left": text_margin}),
             ],
         ),
-        dbc.Row(
+        dbc.Col(
             style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="black_wins"),
                 html.Div("Wins by Black", style={"margin-left": text_margin}),
             ],
         ),
-        dbc.Row(
+        dbc.Col(
             style={"margin-bottom": margin_bottom},
             children=[
                 html.Div(id="draw"),
@@ -265,20 +295,61 @@ c_total_games = dbc.Col(
     ],
 )
 
-c_dropdown = dbc.Col(
+dropdown_status = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Status", header=True),
+        dbc.DropdownMenuItem("All", id="st_all", n_clicks=0),
+        dbc.DropdownMenuItem("Draws", id="st_draw", n_clicks=0),
+        dbc.DropdownMenuItem("Checkmate", id="st_mate", n_clicks=0),
+        dbc.DropdownMenuItem("Resignation", id="st_resign", n_clicks=0),
+        dbc.DropdownMenuItem("Time Forfeit", id="st_outoftime", n_clicks=0),
+    ],
+    label="Status",
+)
+
+dropdown_winner = dbc.Collapse(
+    dbc.DropdownMenu(
+        [
+            dbc.DropdownMenuItem("Winning Side", header=True),
+            dbc.DropdownMenuItem("All", id="wn_all", n_clicks=0),
+            dbc.DropdownMenuItem("White", id="wn_white", n_clicks=0),
+            dbc.DropdownMenuItem("Black", id="wn_black", n_clicks=0),
+        ],
+        label="Winning Side",
+    ),
+    id="wn_menu",
+)
+
+dropdown_time_control = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Time Control", header=True),
+        dbc.DropdownMenuItem("All", id="tc_all", n_clicks=0),
+        dbc.DropdownMenuItem("Bullet", id="tc_bullet", n_clicks=0),
+        dbc.DropdownMenuItem("Blitz", id="tc_blitz", n_clicks=0),
+        # dbc.DropdownMenuItem("Rapid",id="tc_rpd",n_clicks=0), if this shows up later then include it.
+        dbc.DropdownMenuItem("Classical", id="tc_classic", n_clicks=0),
+        dbc.DropdownMenuItem("No Time Control", id="tc_none", n_clicks=0),
+    ],
+    label="Time Control",
+)
+
+dropdown_game_type = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem("Game Type", header=True),
+        dbc.DropdownMenuItem("All", id="gt_all", n_clicks=0),
+        dbc.DropdownMenuItem("Standard", id="gt_std", n_clicks=0),
+        dbc.DropdownMenuItem("Tournament", id="gt_tourney", n_clicks=0),
+    ],
+    label="Game Type",
+)
+
+dropdown_menus = dbc.Row(
     style={"margin-bottom": margin_bottom},
     children=[
-        dbc.DropdownMenu(
-            [
-                dbc.DropdownMenuItem("Status", header=True),
-                dbc.DropdownMenuItem("All"),
-                dbc.DropdownMenuItem("Draws"),
-                dbc.DropdownMenuItem("Checkmate"),
-                dbc.DropdownMenuItem("Resignation"),
-                dbc.DropdownMenuItem("Time Forfeit"),
-            ],
-            label="Status",
-        )
+        dropdown_status,
+        dropdown_winner,
+        dropdown_time_control,
+        dropdown_game_type,
     ],
 )
 
@@ -296,7 +367,7 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
                         piece_selector,
                         c_elo_slider,
                         c_moves_slider,
-                        c_dropdown,
+                        dropdown_menus,
                         c_total_games,
                     ]
                 ),
@@ -314,6 +385,7 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
     Output("white_wins", "children"),
     Output("black_wins", "children"),
     Output("draw", "children"),
+    Output("wn_menu", "is_open"),
     Input("white_color", "n_clicks"),
     Input("black_color", "n_clicks"),
     Input("King", "n_clicks"),
@@ -323,6 +395,22 @@ app.layout = dbc.Jumbotron(  # ADD SETTINGS HERE
     Input("Knight", "n_clicks"),
     Input("elo_slider", "value"),
     Input("moves_slider", "value"),
+    Input("st_all", "n_clicks"),
+    Input("st_draw", "n_clicks"),
+    Input("st_mate", "n_clicks"),
+    Input("st_resign", "n_clicks"),
+    Input("st_outoftime", "n_clicks"),
+    Input("wn_all", "n_clicks"),
+    Input("wn_white", "n_clicks"),
+    Input("wn_black", "n_clicks"),
+    Input("tc_all", "n_clicks"),
+    Input("tc_blitz", "n_clicks"),
+    Input("tc_bullet", "n_clicks"),
+    Input("tc_classic", "n_clicks"),
+    Input("tc_none", "n_clicks"),
+    Input("gt_all", "n_clicks"),
+    Input("gt_std", "n_clicks"),
+    Input("gt_tourney", "n_clicks"),
 )
 def update_chessboard(
     white_color,
@@ -334,13 +422,53 @@ def update_chessboard(
     Knight,
     elo_range,
     move_range,
+    st_all,
+    st_draw,
+    st_mate,
+    st_resign,
+    st_outoftime,
+    wn_all,
+    wn_white,
+    wn_black,
+    tc_all,
+    tc_blitz,
+    tc_bullet,
+    tc_classic,
+    tc_none,
+    gt_all,
+    gt_std,
+    gt_tourney,
 ):
+    # Trigger button here, for when a button is pressed.
+    trigger_button = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+
+    global g_status
+    global g_winner
+    global g_time_control
+    global g_game_type
+
+    if trigger_button in st_dict.keys():
+        g_status = st_dict[trigger_button]
+
+    elif trigger_button in wn_dict.keys():
+        g_winner = wn_dict[trigger_button]
+
+    elif trigger_button in tc_dict.keys():
+        g_time_control = tc_dict[trigger_button]
+
+    elif trigger_button in gt_dict.keys():
+        g_game_type = gt_dict[trigger_button]
+
     # Filters go here.
     dff = df_original[
         (df_original["avg_Elo"] >= int(elo_range[0]))
         & (df_original["avg_Elo"] <= int(elo_range[1]))
         & (df_original["moves"] >= int(move_range[0]))
         & (df_original["moves"] <= int(move_range[-1]))
+        & (df_original["victory_status"].str.contains(g_status))
+        & (df_original["Winner"].str.contains(g_winner))
+        & (df_original["Event"].str.contains(g_time_control))
+        & (df_original["Event"].str.contains(g_game_type))
     ]
 
     # Before further manipulation, get the number of games from the filtered dataframe.
@@ -364,7 +492,6 @@ def update_chessboard(
     global g_color
     global g_piece
 
-    trigger_button = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if trigger_button in ["white_color", "black_color"]:
         g_color = trigger_button
     if trigger_button in ["King", "Queen", "Rook", "Bishop", "Knight"]:
@@ -372,18 +499,24 @@ def update_chessboard(
 
     df = board_output(dff, cp_dict[g_color, g_piece])
 
+    # Additionally:
+    if g_status == "draw":
+        is_open = False
+    else:
+        is_open = True
+
     # Transform it for the heatmap.
     df = (
         df.stack()
         .reset_index()
         .rename(columns={"level_0": "rows", "level_1": "cols", 0: "freq"})
     )
-    print(df)
+
     df["rows"] = df["rows"].replace({i: list(range(8))[::-1][i] for i in range(8)})
     chessboard = getChessboard(800)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    return chessboard, game_count, white_wins, black_wins, draw
+    return chessboard, game_count, white_wins, black_wins, draw, is_open
 
 
 # Statring the dash app
