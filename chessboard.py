@@ -11,7 +11,7 @@ def board_output(vector):
     return pd.DataFrame(brd)
 
 
-def getChessboard(dimensions: int = 500, margin: int = 50):
+def getChessboard(dimensions: int = 600, margin: int = 50):
     row = [0, 1] * 4
     boardmatrix = [row[::-1] if i % 2 == 1 else row for i in range(1, 9)]
 
@@ -22,11 +22,10 @@ def getChessboard(dimensions: int = 500, margin: int = 50):
             height=dimensions,
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
-            font_color="white",
+            font_color="#303030",
             coloraxis_showscale=False,
             yaxis=dict(
                 range=[-0.5, 7.5],
-                color="white",
                 tickfont_size=12,
                 fixedrange=True,
                 tickmode="array",
@@ -35,7 +34,6 @@ def getChessboard(dimensions: int = 500, margin: int = 50):
             ),
             xaxis=dict(
                 range=[-0.5, 7.5],
-                color="white",
                 tickfont_size=12,
                 fixedrange=True,
                 tickmode="array",

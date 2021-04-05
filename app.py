@@ -143,19 +143,19 @@ app.layout = html.Div(
                                     dbc.ButtonGroup(
                                         [
                                             dbc.Button(
-                                                "King", color="info", n_clicks=0,outline=True, id="King"
+                                                "King", color=(button_color := "primary"), n_clicks=0,outline=True, id="King"
                                             ),
                                             dbc.Button(
-                                                "Queen", color="info", n_clicks=0,outline=True, id="Queen"
+                                                "Queen", color=button_color, n_clicks=0,outline=True, id="Queen"
                                             ),
                                             dbc.Button(
-                                                "Rook", color="info", n_clicks=0,outline=True, id="Rook"
+                                                "Rook", color=button_color, n_clicks=0,outline=True, id="Rook"
                                             ),
                                             dbc.Button(
-                                                "Bishop", color="info", n_clicks=0,outline=True, id="Bishop"
+                                                "Bishop", color=button_color, n_clicks=0,outline=True, id="Bishop"
                                             ),
                                             dbc.Button(
-                                                "Knight", color="info", n_clicks=0,outline=True,id="Knight"
+                                                "Knight", color=button_color, n_clicks=0,outline=True,id="Knight"
                                             ),
                                         ]
                                     ),width={'size':'Auto','offset':0}

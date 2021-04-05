@@ -20,9 +20,17 @@
 }
 
 body {
-    margin: 0px;
+    margin: 40px;
 }
 
+
+/* BUTTON STUFF */
+
+.btn-outline-dark:not(:disabled):not(.disabled):focus, .btn-outline-dark:not(:disabled):not(.disabled).focus, .show>.btn-outline-dark.dropdown-toggle {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+}
 
 /* SLIDER STUFF */
 
