@@ -41,10 +41,8 @@ df_original = pd.read_csv(
         "bKnight2_sqr": ast.literal_eval,
     },
 )
-
-# Calculate min and max elo
-min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
 max_moves = df_original["moves"].max()
+min_elo, max_elo = df_original["avg_Elo"].min(), df_original["avg_Elo"].max()
 
 # Define function to output an 8*8 dataframe based on a df and a list of column names to parse.
 
@@ -172,14 +170,19 @@ stacked_graph = dbc.Row(
     style={"margin-bottom": "30px"},
     justify="center",
     children=[
-        dcc.Graph(
-            id="stackedbar",
-            animate=True,
-            config={
-                "displayModeBar": False,
-                "scrollZoom": False,
-                "showAxisDragHandles": False,
-            },
+        dbc.Col(
+            width=10,
+            children=[
+                dcc.Graph(
+                    id="stackedbar",
+                    animate=True,
+                    config={
+                        "displayModeBar": False,
+                        "scrollZoom": False,
+                        "showAxisDragHandles": False,
+                    },
+                )
+            ],
         )
     ],
 )
@@ -411,6 +414,16 @@ dropdown_game_type = dbc.DropdownMenu(
     id="dropdown_game_type",
 )
 
+dropdown_states = dbc.Row(
+    justify="center",
+    children=[
+        html.Tbody("xsxsxs", id="g_status", style={"margin": "10px"}),
+        html.Tbody("xsxsxs", id="g_winner", style={"margin": "10px"}),
+        html.Tbody("xsxsxs", id="g_time_control", style={"margin": "10px"}),
+        html.Tbody(children="111", id="g_game_type", style={"margin": "10px"}),
+    ],
+)
+
 popover_status = dbc.Popover(
     [
         dbc.PopoverHeader("Status of the Game"),
@@ -501,6 +514,7 @@ app.layout = dbc.Jumbotron(
                         c_elo_slider,
                         c_moves_slider,
                         dropdown_menus,
+                        dropdown_states,
                     ]
                 ),
                 # CHESS BOARD COLUMN
@@ -526,31 +540,38 @@ app.layout = dbc.Jumbotron(
     Output("Rook", "active"),
     Output("Bishop", "active"),
     Output("Knight", "active"),
-    Input("white_color", "n_clicks"),
-    Input("black_color", "n_clicks"),
-    Input("King", "n_clicks"),
-    Input("Queen", "n_clicks"),
-    Input("Rook", "n_clicks"),
-    Input("Bishop", "n_clicks"),
-    Input("Knight", "n_clicks"),
-    Input("elo_slider", "value"),
-    Input("moves_slider", "value"),
-    Input("st_all", "n_clicks"),
-    Input("st_draw", "n_clicks"),
-    Input("st_mate", "n_clicks"),
-    Input("st_resign", "n_clicks"),
-    Input("st_outoftime", "n_clicks"),
-    Input("wn_all", "n_clicks"),
-    Input("wn_white", "n_clicks"),
-    Input("wn_black", "n_clicks"),
-    Input("tc_all", "n_clicks"),
-    Input("tc_blitz", "n_clicks"),
-    Input("tc_bullet", "n_clicks"),
-    Input("tc_classic", "n_clicks"),
-    Input("tc_none", "n_clicks"),
-    Input("gt_all", "n_clicks"),
-    Input("gt_std", "n_clicks"),
-    Input("gt_tourney", "n_clicks"),
+    Output("moves_slider", "value"),
+    Output("g_status", "children"),
+    Output("g_winner", "children"),
+    Output("g_time_control", "children"),
+    Output("g_game_type", "children"),
+    [
+        Input("white_color", "n_clicks"),
+        Input("black_color", "n_clicks"),
+        Input("King", "n_clicks"),
+        Input("Queen", "n_clicks"),
+        Input("Rook", "n_clicks"),
+        Input("Bishop", "n_clicks"),
+        Input("Knight", "n_clicks"),
+        Input("elo_slider", "value"),
+        Input("st_all", "n_clicks"),
+        Input("st_draw", "n_clicks"),
+        Input("st_mate", "n_clicks"),
+        Input("st_resign", "n_clicks"),
+        Input("st_outoftime", "n_clicks"),
+        Input("wn_all", "n_clicks"),
+        Input("wn_white", "n_clicks"),
+        Input("wn_black", "n_clicks"),
+        Input("tc_all", "n_clicks"),
+        Input("tc_blitz", "n_clicks"),
+        Input("tc_bullet", "n_clicks"),
+        Input("tc_classic", "n_clicks"),
+        Input("tc_none", "n_clicks"),
+        Input("gt_all", "n_clicks"),
+        Input("gt_std", "n_clicks"),
+        Input("gt_tourney", "n_clicks"),
+        Input("moves_slider", "value"),
+    ],
 )
 def update_chessboard(
     white_color,
@@ -561,7 +582,6 @@ def update_chessboard(
     Bishop,
     Knight,
     elo_range,
-    move_range,
     st_all,
     st_draw,
     st_mate,
@@ -578,6 +598,7 @@ def update_chessboard(
     gt_all,
     gt_std,
     gt_tourney,
+    move_range,
 ):
     # Trigger button here, for when a button is pressed.
     trigger_button = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
@@ -610,12 +631,17 @@ def update_chessboard(
         & (df_original["Event"].str.contains(g_time_control))
         & (df_original["Event"].str.contains(g_game_type))
     ]
+    if dff.shape[0] == 0:
+        return dash.no_update
+    min_moves_, max_moves_ = dff["moves"].min(), dff["moves"].max()
+    print(f"{min_moves_ = }, {max_moves_ = }")
+    value_ = [min_moves_, max_moves_]
 
     # Before further manipulation, get the number of games from the filtered dataframe.
     game_count = dff.shape[0]
     game_results = dff.Winner.value_counts().to_dict()
     game_results_norm = np.round(
-        dff.Winner.str.upper().value_counts(normalize=True), 2
+        dff.Winner.str.upper().value_counts(normalize=True), 4
     ).to_dict()
 
     if "white" in game_results.keys():
@@ -630,6 +656,7 @@ def update_chessboard(
         draw = game_results["draw"]
     else:
         draw = 0
+    print(game_results_norm)
     stackedbar = getStackedBar(game_results_norm)
 
     # Then retrieve the column of interest.
@@ -669,7 +696,37 @@ def update_chessboard(
     getBoard(chessboard)
     chessboard.add_trace(getHeatmap(dataframe=df))
 
-    print(f"{g_color = }, {g_game_type = }, {g_piece = }, {g_status = }, {g_time_control = }, {g_winner = }")
+    print(
+        f"{g_color = }, {g_game_type = }, {g_piece = }, {g_status = }, {g_time_control = }, {g_winner = }"
+    )
+
+    g_status_ = {
+        ".*": "Status: all",
+        "draw": "Status: draw",
+        "mate": "Status: checkmate",
+        "resign": "Status: resignation",
+        "outoftime": "Status: time forfeit",
+    }[g_status]
+
+    g_winner_ = {
+        ".*": "winner: All",
+        "white": "winner: white",
+        "black": "winner: black",
+    }[g_winner]
+
+    g_time_control_ = {
+        ".*": "time control: all",
+        "Bullet": "time control: Bullet",
+        "Blitz": "time control: Blitz",
+        "Classical": "time control: Classical",
+        "Correspondence": "time control: No Time Control",
+    }[g_time_control]
+
+    g_game_type_ = {
+        ".*": "game type: all",
+        "game": "game type: standard",
+        "tournament": "game type: tournament",
+    }[g_game_type]
 
     return (
         chessboard,
@@ -686,6 +743,11 @@ def update_chessboard(
         r_act,
         b_act,
         n_act,
+        value_,
+        g_status_.upper(),
+        g_winner_.upper(),
+        g_time_control_.upper(),
+        g_game_type_.upper(),
     )
 
 

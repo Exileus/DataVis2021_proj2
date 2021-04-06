@@ -13,13 +13,15 @@ def board_output(vector):
 
 
 def getStackedBar(dictionary):
+    print(dictionary)
     fig = px.bar(
-        pd.DataFrame({"Games": dictionary}).T,
+        pd.DataFrame({"Games": dictionary}).T * 100,
         height=50,
         orientation="h",
         barmode="stack",
         color_discrete_map={"BLACK": "black", "WHITE": "white", "DRAW": "gray"},
     )
+
     margin = 0
     fig.update_layout(
         xaxis_title="",
@@ -37,14 +39,12 @@ def getStackedBar(dictionary):
         legend_font=dict(family="Arial", size=12, color="black"),
     )
 
-    fig.update_traces(marker_line_width=0, hovertemplate="%{x}")
+    fig.update_traces(marker_line_width=0, hovertemplate="%{x}%")
     return fig
 
 
 def getChessboard(dimensions: int = 600, margin: int = 50):
     row = [0, 1] * 4
-    boardmatrix = [row[::-1] if i % 2 == 1 else row for i in range(1, 9)]
-
     chessboard = go.Figure(
         layout=dict(
             margin=dict(l=margin, r=margin, t=margin, b=margin, pad=10),
@@ -74,20 +74,6 @@ def getChessboard(dimensions: int = 600, margin: int = 50):
         )
     )
     getBoard(chessboard)
-    # chessboard.add_trace(
-    #     go.Heatmap(
-    #         x=list(range(0, 8)),
-    #         y=list(range(0, 8)),
-    #         x0=0,
-    #         y0=0,
-    #         dx=0,
-    #         z=boardmatrix,
-    #         hoverinfo="none",
-    #         name="Chess Board",
-    #         colorscale=["white", "#303030"],
-    #         showscale=False,
-    #     )
-    # )
     return chessboard
 
 
