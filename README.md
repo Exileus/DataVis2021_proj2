@@ -12,7 +12,7 @@ It is commonly said one can go their entire life without ever playing the same g
 
 The dataset was produced from data obtained from the Lichess open database [1], which hosts millions of games in PGN format, which have been parsed and stored as a .csv file. Due to size constraints and limitations, the PGN corresponding the month of April 2017, was chosen, and a sample of 5000 games were extracted from it. For this purpose, the pandas library was used in conjunction with the python-chess library. Information derived from the game includes winners, payer’s elo rating, played moves, chess piece positions, time control, and game types. 
 
-##Visualization and Interactive Choices
+## Visualization and Interactive Choices
 
 Design wise, the presentation is meant to be simple but intuitive: a single chessboard where hotspots can be visualized was construed as the main piece of the visualization, while a range of interactable components are employed to add interactivity and functionality. Link to the app: https://chess-vis21.herokuapp.com/
 
